@@ -10,8 +10,9 @@ from pathlib import Path
 
 from fastapi import FastAPI, File, Query, UploadFile
 from fastapi.responses import FileResponse, JSONResponse
+from fastapi.staticfiles import StaticFiles
 
-from app.config import SUPPORTED_EXTENSIONS, TEMP_DIR, VALID_PLATFORMS
+from app.config import BASE_DIR, SUPPORTED_EXTENSIONS, TEMP_DIR, VALID_PLATFORMS
 from app.pipeline import run_pipeline
 
 # ---------------------------------------------------------------------------
@@ -34,6 +35,11 @@ app = FastAPI(
     ),
     version="1.0.0",
 )
+
+# Serve the frontend UI
+STATIC_DIR = BASE_DIR / "static"
+if STATIC_DIR.exists():
+    app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 
 
 @app.post("/optimize")
@@ -134,3 +140,12 @@ async def optimize(
 async def health():
     """Health check endpoint."""
     return {"status": "ok"}
+
+
+@app.get("/")
+async def root():
+    """Serve the frontend UI."""
+    index_path = STATIC_DIR / "index.html"
+    if index_path.exists():
+        return FileResponse(str(index_path), media_type="text/html")
+    return {"message": "Audio Optimizer API — visit /docs for Swagger UI"}
