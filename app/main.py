@@ -60,10 +60,15 @@ app = FastAPI(
 # Serve the frontend UI
 STATIC_DIR = BASE_DIR / "static"
 if STATIC_DIR.exists():
-    app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
+    if (STATIC_DIR / "assets").exists():
+        app.mount("/assets", StaticFiles(directory=str(STATIC_DIR / "assets")), name="assets")
+    
+    @app.get("/")
+    async def serve_index():
+        return FileResponse(str(STATIC_DIR / "index.html"))
 
 
-def _run_job(job_id: str, input_path: Path, platform: str, reference_path: Path | None, config: dict | None = None):
+def _run_job(job_id: str, input_path: Path, platform: str, reference_path: Path | None):
     """Run the pipeline in a background thread, updating job progress."""
     job = jobs[job_id]
 
@@ -82,10 +87,9 @@ def _run_job(job_id: str, input_path: Path, platform: str, reference_path: Path 
             platform=platform,
             reference_path=reference_path,
             on_progress=on_progress,
-            config=config,
         )
         job["status"] = "done"
-        job["stage"] = 6
+        job["stage"] = 5
         job["stage_name"] = "Complete"
         job["output_path"] = final_path
     except Exception as e:
@@ -99,7 +103,6 @@ async def optimize(
     file: UploadFile = File(..., description="Audio file to optimize"),
     platform: str = Query("youtube", description="Target platform", enum=VALID_PLATFORMS),
     reference: UploadFile | None = File(None, description="Optional reference track"),
-    config: str = Query("{}", description="JSON config for stage toggles and effects"),
 ):
     """Start an optimization job. Returns a job_id for progress tracking."""
     # Validate
@@ -140,22 +143,15 @@ async def optimize(
         "stage_times": {},
     }
 
-    # Parse config JSON
-    import json as _json
-    try:
-        parsed_config = _json.loads(config) if config else {}
-    except _json.JSONDecodeError:
-        parsed_config = {}
-
     # Run in background thread
     thread = threading.Thread(
         target=_run_job,
-        args=(job_id, input_path, platform, reference_path, parsed_config),
+        args=(job_id, input_path, platform, reference_path),
         daemon=True,
     )
     thread.start()
 
-    logger.info("Job %s created: file=%s, platform=%s, config=%s", job_id, file.filename, platform, parsed_config)
+    logger.info("Job %s created: file=%s, platform=%s", job_id, file.filename, platform)
     return {"job_id": job_id}
 
 
@@ -220,7 +216,7 @@ async def original(job_id: str):
     input_path = Path(job.get("input_path", ""))
     if not input_path.exists():
         return JSONResponse(status_code=404, content={"error": "Original file no longer available"})
-    return FileResponse(path=str(input_path), media_type="audio/mpeg")
+    return FileResponse(path=str(input_path), media_type="audio/wav")
 
 
 @app.get("/job/{job_id}")

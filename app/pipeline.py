@@ -68,13 +68,6 @@ def run_pipeline(
     Returns:
         Path to the final processed WAV file.
     """
-    cfg = config or {}
-    stages = cfg.get("stages", {})
-    effects = cfg.get("effects", {})
-
-    def is_enabled(stage_key: str, default: bool = True) -> bool:
-        return stages.get(stage_key, {}).get("enabled", default)
-
     def _progress(stage: int, name: str):
         if on_progress:
             on_progress(stage, name)
@@ -83,7 +76,7 @@ def run_pipeline(
     work_dir = TEMP_DIR / request_id
     work_dir.mkdir(parents=True, exist_ok=True)
 
-    logger.info("Pipeline started [%s] — platform=%s, config=%s", request_id, platform, cfg)
+    logger.info("Pipeline started [%s] — platform=%s", request_id, platform)
 
     try:
         # ----- Pre-process: convert to WAV -----
@@ -95,62 +88,29 @@ def run_pipeline(
             wav_reference = _convert_to_wav(reference_path, work_dir, "reference")
 
         # ----- Stage 1: Vocal Isolation -----
-        if is_enabled("isolate"):
-            _progress(1, "Isolating vocals")
-            from app.stages.isolate import isolate_vocals
-            current = isolate_vocals(current, work_dir)
-        else:
-            _progress(1, "Skipping isolation")
-            logger.info("Stage 1 — Skipped (disabled)")
+        _progress(1, "Isolating vocals")
+        from app.stages.isolate import isolate_vocals
+        current = isolate_vocals(current, work_dir)
 
         # ----- Stage 2: Denoise -----
-        if is_enabled("denoise"):
-            _progress(2, "Denoising audio")
-            from app.stages.enhance import enhance_audio
-            current = enhance_audio(current, work_dir)
-        else:
-            _progress(2, "Skipping denoise")
-            logger.info("Stage 2 — Skipped (disabled)")
+        _progress(2, "Denoising audio")
+        from app.stages.enhance import enhance_audio
+        current = enhance_audio(current, work_dir)
 
         # ----- Stage 3: Reference Mastering -----
-        if is_enabled("master"):
+        if wav_reference:
             _progress(3, "Mastering audio")
             from app.stages.master import master_audio
             current = master_audio(current, work_dir, wav_reference)
         else:
-            _progress(3, "Skipping mastering")
-            logger.info("Stage 3 — Skipped (disabled)")
+            _progress(3, "Skipping mastering (no reference)")
+            logger.info("Stage 3 — Skipped (no reference provided)")
 
         # ----- Stage 4: LUFS Normalization -----
-        if is_enabled("normalize"):
-            _progress(4, "Normalizing loudness")
-            from app.stages.normalize import normalize_loudness
-            # Allow custom LUFS target from config
-            custom_lufs = stages.get("normalize", {}).get("lufs")
-            current = normalize_loudness(current, work_dir, platform, custom_lufs=custom_lufs)
-        else:
-            _progress(4, "Skipping normalization")
-            logger.info("Stage 4 — Skipped (disabled)")
-
-        # ----- Stage 5: Studio Effects -----
-        has_effects = any(
-            effects.get(k, {}).get("enabled", False)
-            for k in ("wind_removal", "eq", "compressor", "reverb")
-        )
-        if has_effects:
-            _progress(5, "Applying effects")
-            from app.stages.effects import apply_effects
-            current = apply_effects(
-                current,
-                work_dir,
-                wind_removal=effects.get("wind_removal"),
-                eq=effects.get("eq"),
-                compressor=effects.get("compressor"),
-                reverb=effects.get("reverb"),
-            )
-        else:
-            _progress(5, "No effects")
-            logger.info("Stage 5 — No effects enabled")
+        _progress(4, "Normalizing loudness")
+        from app.stages.normalize import normalize_loudness
+        # Hardcode to -14.0 LUFS for one click magic
+        current = normalize_loudness(current, work_dir, platform, custom_lufs=-14.0)
 
         logger.info("Pipeline complete [%s] → %s", request_id, current)
         return current
