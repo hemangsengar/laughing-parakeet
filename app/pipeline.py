@@ -51,6 +51,7 @@ def run_pipeline(
     input_path: Path,
     platform: str,
     reference_path: Path | None = None,
+    on_progress=None,
 ) -> Path:
     """
     Execute the full 4-stage audio optimization pipeline.
@@ -65,11 +66,15 @@ def run_pipeline(
         input_path:      Path to the uploaded audio file.
         platform:        Target platform (youtube, podcast, broadcast, reels).
         reference_path:  Optional reference track for mastering.
+        on_progress:     Optional callback(stage: int, stage_name: str).
 
     Returns:
-        Path to the final processed WAV file.  The caller is responsible
-        for cleaning up the work directory after serving the file.
+        Path to the final processed WAV file.
     """
+    def _progress(stage: int, name: str):
+        if on_progress:
+            on_progress(stage, name)
+
     # Create a unique working directory for this request
     request_id = uuid.uuid4().hex[:12]
     work_dir = TEMP_DIR / request_id
@@ -79,6 +84,7 @@ def run_pipeline(
 
     try:
         # ----- Pre-process: convert to WAV -----
+        _progress(0, "Converting to WAV")
         wav_input = _convert_to_wav(input_path, work_dir, "input")
 
         # Convert reference track too if provided
@@ -87,21 +93,25 @@ def run_pipeline(
             wav_reference = _convert_to_wav(reference_path, work_dir, "reference")
 
         # ----- Stage 1: Vocal Isolation -----
+        _progress(1, "Isolating vocals")
         from app.stages.isolate import isolate_vocals
 
         vocals_path = isolate_vocals(wav_input, work_dir)
 
         # ----- Stage 2: Denoise + Enhance -----
+        _progress(2, "Denoising & enhancing")
         from app.stages.enhance import enhance_audio
 
         enhanced_path = enhance_audio(vocals_path, work_dir)
 
         # ----- Stage 3: Reference Mastering -----
+        _progress(3, "Mastering audio")
         from app.stages.master import master_audio
 
         mastered_path = master_audio(enhanced_path, work_dir, wav_reference)
 
         # ----- Stage 4: LUFS Normalization -----
+        _progress(4, "Normalizing loudness")
         from app.stages.normalize import normalize_loudness
 
         final_path = normalize_loudness(mastered_path, work_dir, platform)
@@ -113,4 +123,3 @@ def run_pipeline(
         # Clean up on failure
         shutil.rmtree(work_dir, ignore_errors=True)
         raise
-

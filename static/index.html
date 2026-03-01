@@ -22,7 +22,7 @@
         :root {
             --bg: #faf9f7;
             --bg-card: #ffffff;
-            --bg-subtle: #f3f2ef;
+            --bg-subtle: #f5f4f1;
             --border: #e8e6e1;
             --border-hover: #d4d1cb;
             --text: #1a1a1a;
@@ -46,23 +46,21 @@
             --stage-3-bg: #fffbeb;
             --stage-4: #059669;
             --stage-4-bg: #ecfdf5;
-            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
-            --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.06);
-            --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.08);
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04);
+            --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.06);
             --radius: 12px;
             --radius-lg: 16px;
             --radius-xl: 20px;
         }
 
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-family: 'Inter', -apple-system, sans-serif;
             background: var(--bg);
             color: var(--text);
             min-height: 100vh;
             -webkit-font-smoothing: antialiased;
         }
 
-        /* Warm gradient background */
         .bg-glow {
             position: fixed;
             inset: 0;
@@ -70,8 +68,8 @@
             z-index: 0;
             background:
                 radial-gradient(ellipse at 20% 0%, rgba(108, 71, 255, 0.07) 0%, transparent 60%),
-                radial-gradient(ellipse at 80% 0%, rgba(251, 191, 36, 0.06) 0%, transparent 50%),
-                radial-gradient(ellipse at 50% 100%, rgba(16, 185, 129, 0.05) 0%, transparent 50%);
+                radial-gradient(ellipse at 80% 0%, rgba(251, 191, 36, 0.05) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 100%, rgba(16, 185, 129, 0.04) 0%, transparent 50%);
         }
 
         .container {
@@ -82,7 +80,7 @@
             padding: 48px 20px 80px;
         }
 
-        /* ---- Header ---- */
+        /* Header */
         .header {
             text-align: center;
             margin-bottom: 40px;
@@ -115,7 +113,6 @@
         .logo-text {
             font-size: 15px;
             font-weight: 700;
-            color: var(--text);
             letter-spacing: -0.3px;
         }
 
@@ -125,7 +122,6 @@
             letter-spacing: -0.8px;
             line-height: 1.15;
             margin-bottom: 12px;
-            color: var(--text);
         }
 
         .subtitle {
@@ -136,132 +132,159 @@
             margin: 0 auto;
         }
 
-        /* ---- Pipeline Visual ---- */
-        .pipeline {
+        /* Pipeline Timeline */
+        .timeline {
             display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
+            align-items: flex-start;
+            justify-content: space-between;
             margin: 32px 0 36px;
-            flex-wrap: wrap;
+            position: relative;
+            padding: 0 12px;
         }
 
-        .stage-pill {
+        .timeline::before {
+            content: '';
+            position: absolute;
+            top: 18px;
+            left: 48px;
+            right: 48px;
+            height: 3px;
+            background: var(--border);
+            border-radius: 2px;
+            z-index: 0;
+        }
+
+        .timeline-progress {
+            position: absolute;
+            top: 18px;
+            left: 48px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--stage-1), var(--stage-2), var(--stage-3), var(--stage-4));
+            border-radius: 2px;
+            z-index: 1;
+            transition: width 0.6s ease;
+            width: 0%;
+        }
+
+        .stage {
             display: flex;
+            flex-direction: column;
             align-items: center;
-            gap: 6px;
-            padding: 7px 14px;
-            border-radius: 999px;
-            font-size: 12.5px;
-            font-weight: 600;
-            border: 1.5px solid;
-            transition: all 0.35s ease;
-            opacity: 0.65;
+            gap: 8px;
+            position: relative;
+            z-index: 2;
+            width: 80px;
         }
 
-        .stage-pill.active {
-            opacity: 1;
-            transform: scale(1.06);
-        }
-
-        .stage-pill.completed {
-            opacity: 0.85;
-        }
-
-        .stage-pill .num {
-            width: 18px;
-            height: 18px;
+        .stage-dot {
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 10px;
+            font-size: 13px;
             font-weight: 700;
-            color: white;
+            border: 3px solid var(--border);
+            background: white;
+            color: var(--text-muted);
+            transition: all 0.35s ease;
         }
 
-        .stage-pill[data-stage="1"] {
-            background: var(--stage-1-bg);
-            border-color: rgba(124, 92, 252, 0.2);
+        .stage-label {
+            font-size: 11.5px;
+            font-weight: 600;
+            text-align: center;
+            color: var(--text-muted);
+            transition: color 0.3s;
+        }
+
+        .stage-time {
+            font-size: 10px;
+            color: var(--text-muted);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        /* Stage states */
+        .stage.active .stage-dot {
+            border-color: var(--accent);
+            color: var(--accent);
+            box-shadow: 0 0 0 6px var(--accent-glow);
+            animation: pulse-ring 2s ease infinite;
+        }
+
+        .stage.active .stage-label {
+            color: var(--accent);
+        }
+
+        .stage[data-stage="1"].active .stage-dot {
+            border-color: var(--stage-1);
+            color: var(--stage-1);
+            box-shadow: 0 0 0 6px rgba(124, 92, 252, 0.12);
+        }
+
+        .stage[data-stage="1"].active .stage-label {
             color: var(--stage-1);
         }
 
-        .stage-pill[data-stage="1"] .num {
-            background: var(--stage-1);
+        .stage[data-stage="2"].active .stage-dot {
+            border-color: var(--stage-2);
+            color: var(--stage-2);
+            box-shadow: 0 0 0 6px rgba(8, 145, 178, 0.12);
         }
 
-        .stage-pill[data-stage="1"].active {
-            box-shadow: 0 0 0 4px rgba(124, 92, 252, 0.1);
-            border-color: var(--stage-1);
-        }
-
-        .stage-pill[data-stage="2"] {
-            background: var(--stage-2-bg);
-            border-color: rgba(8, 145, 178, 0.2);
+        .stage[data-stage="2"].active .stage-label {
             color: var(--stage-2);
         }
 
-        .stage-pill[data-stage="2"] .num {
-            background: var(--stage-2);
+        .stage[data-stage="3"].active .stage-dot {
+            border-color: var(--stage-3);
+            color: var(--stage-3);
+            box-shadow: 0 0 0 6px rgba(217, 119, 6, 0.12);
         }
 
-        .stage-pill[data-stage="2"].active {
-            box-shadow: 0 0 0 4px rgba(8, 145, 178, 0.1);
-            border-color: var(--stage-2);
-        }
-
-        .stage-pill[data-stage="3"] {
-            background: var(--stage-3-bg);
-            border-color: rgba(217, 119, 6, 0.2);
+        .stage[data-stage="3"].active .stage-label {
             color: var(--stage-3);
         }
 
-        .stage-pill[data-stage="3"] .num {
-            background: var(--stage-3);
+        .stage[data-stage="4"].active .stage-dot {
+            border-color: var(--stage-4);
+            color: var(--stage-4);
+            box-shadow: 0 0 0 6px rgba(5, 150, 105, 0.12);
         }
 
-        .stage-pill[data-stage="3"].active {
-            box-shadow: 0 0 0 4px rgba(217, 119, 6, 0.1);
-            border-color: var(--stage-3);
-        }
-
-        .stage-pill[data-stage="4"] {
-            background: var(--stage-4-bg);
-            border-color: rgba(5, 150, 105, 0.2);
+        .stage[data-stage="4"].active .stage-label {
             color: var(--stage-4);
         }
 
-        .stage-pill[data-stage="4"] .num {
-            background: var(--stage-4);
+        .stage.done .stage-dot {
+            border-color: var(--success);
+            background: var(--success);
+            color: white;
         }
 
-        .stage-pill[data-stage="4"].active {
-            box-shadow: 0 0 0 4px rgba(5, 150, 105, 0.1);
-            border-color: var(--stage-4);
+        .stage.done .stage-label {
+            color: var(--success);
         }
 
-        .stage-pill.active .num {
-            animation: pulse-num 1.5s ease-in-out infinite;
+        .stage.done .stage-time {
+            opacity: 1;
         }
 
-        @keyframes pulse-num {
+        @keyframes pulse-ring {
 
             0%,
             100% {
-                transform: scale(1);
+                box-shadow: 0 0 0 4px var(--accent-glow);
             }
 
             50% {
-                transform: scale(1.2);
+                box-shadow: 0 0 0 8px rgba(108, 71, 255, 0.06);
             }
         }
 
-        .pipe-arrow {
-            color: var(--text-muted);
-            font-size: 13px;
-        }
-
-        /* ---- Main Card ---- */
+        /* Card */
         .card {
             background: var(--bg-card);
             border: 1px solid var(--border);
@@ -270,9 +293,8 @@
             box-shadow: var(--shadow-md);
         }
 
-        /* ---- Upload Zone ---- */
+        /* Upload Zone */
         .upload-zone {
-            position: relative;
             border: 2px dashed var(--border);
             border-radius: var(--radius-lg);
             padding: 44px 28px;
@@ -297,6 +319,11 @@
             border-color: var(--success);
             border-style: solid;
             background: var(--success-bg);
+        }
+
+        .upload-zone.processing {
+            pointer-events: none;
+            opacity: 0.6;
         }
 
         .upload-icon {
@@ -330,7 +357,6 @@
             font-size: 15px;
             font-weight: 600;
             margin-bottom: 6px;
-            color: var(--text);
         }
 
         .upload-zone p {
@@ -338,7 +364,6 @@
             color: var(--text-secondary);
         }
 
-        /* File info tag */
         .file-info {
             display: none;
             align-items: center;
@@ -365,7 +390,7 @@
         .file-info .name {
             font-size: 13px;
             font-weight: 500;
-            flex-grow: 1;
+            flex: 1;
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
@@ -384,7 +409,6 @@
             cursor: pointer;
             padding: 2px 6px;
             font-size: 16px;
-            line-height: 1;
             border-radius: 6px;
             transition: all 0.15s;
         }
@@ -394,7 +418,7 @@
             color: var(--error);
         }
 
-        /* ---- Controls ---- */
+        /* Controls */
         .controls {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -483,11 +507,7 @@
             font-weight: 600;
         }
 
-        .ref-btn.has-file svg {
-            color: var(--accent);
-        }
-
-        /* ---- Submit Button ---- */
+        /* Submit */
         .submit-btn {
             display: flex;
             align-items: center;
@@ -511,10 +531,6 @@
         .submit-btn:hover:not(:disabled) {
             transform: translateY(-1px);
             box-shadow: 0 6px 24px rgba(108, 71, 255, 0.35);
-        }
-
-        .submit-btn:active:not(:disabled) {
-            transform: translateY(0);
         }
 
         .submit-btn:disabled {
@@ -542,7 +558,7 @@
             }
         }
 
-        /* ---- Status Panel ---- */
+        /* Status Panel */
         .status-panel {
             display: none;
             margin-top: 20px;
@@ -560,7 +576,7 @@
             display: flex;
             align-items: center;
             gap: 12px;
-            margin-bottom: 14px;
+            margin-bottom: 8px;
         }
 
         .status-icon {
@@ -609,48 +625,6 @@
             margin-top: 2px;
         }
 
-        /* Progress bar */
-        .progress-outer {
-            height: 5px;
-            background: var(--border);
-            border-radius: 999px;
-            overflow: hidden;
-        }
-
-        .progress-inner {
-            height: 100%;
-            width: 0%;
-            border-radius: 999px;
-            background: linear-gradient(90deg, var(--accent), var(--accent-hover));
-            transition: width 0.4s ease;
-        }
-
-        .progress-inner.indeterminate {
-            width: 30%;
-            animation: slide 1.5s ease-in-out infinite;
-        }
-
-        @keyframes slide {
-            0% {
-                transform: translateX(-100%);
-            }
-
-            100% {
-                transform: translateX(400%);
-            }
-        }
-
-        .progress-inner.complete {
-            width: 100%;
-            background: linear-gradient(90deg, var(--success), #34d399);
-        }
-
-        .progress-inner.error {
-            background: var(--error);
-            width: 100%;
-        }
-
-        /* Error */
         .error-msg {
             margin-top: 12px;
             padding: 10px 14px;
@@ -705,7 +679,7 @@
             height: 17px;
         }
 
-        /* ---- Footer ---- */
+        /* Footer */
         .footer {
             text-align: center;
             margin-top: 40px;
@@ -723,7 +697,6 @@
             color: var(--accent);
         }
 
-        /* ---- Responsive ---- */
         @media (max-width: 520px) {
             .container {
                 padding: 32px 16px 60px;
@@ -737,21 +710,25 @@
                 grid-template-columns: 1fr;
             }
 
-            .pipeline {
-                gap: 4px;
-            }
-
-            .stage-pill {
-                font-size: 11px;
-                padding: 5px 10px;
-            }
-
-            .pipe-arrow {
-                display: none;
-            }
-
             .card {
                 padding: 20px;
+            }
+
+            .stage {
+                width: 65px;
+            }
+
+            .stage-label {
+                font-size: 10px;
+            }
+
+            .timeline::before {
+                left: 36px;
+                right: 36px;
+            }
+
+            .timeline-progress {
+                left: 36px;
             }
         }
     </style>
@@ -762,7 +739,6 @@
     <div class="bg-glow"></div>
 
     <div class="container">
-        <!-- Header -->
         <header class="header">
             <div class="logo">
                 <div class="logo-icon">
@@ -776,25 +752,37 @@
             </div>
             <h1>Optimize any audio in<br>one click</h1>
             <p class="subtitle">
-                Isolate vocals, remove noise, master against a reference, and hit broadcast-ready loudness. Get a 24-bit
-                WAV, ready for any editor.
+                Isolate vocals, remove noise, master against a reference, and hit broadcast-ready loudness.
             </p>
         </header>
 
-        <!-- Pipeline Steps -->
-        <div class="pipeline" id="pipelineVisual">
-            <div class="stage-pill" data-stage="1"><span class="num">1</span> Isolate</div>
-            <span class="pipe-arrow">→</span>
-            <div class="stage-pill" data-stage="2"><span class="num">2</span> Enhance</div>
-            <span class="pipe-arrow">→</span>
-            <div class="stage-pill" data-stage="3"><span class="num">3</span> Master</div>
-            <span class="pipe-arrow">→</span>
-            <div class="stage-pill" data-stage="4"><span class="num">4</span> Normalize</div>
+        <!-- Pipeline Timeline -->
+        <div class="timeline" id="timeline">
+            <div class="timeline-progress" id="timelineProgress"></div>
+            <div class="stage" data-stage="1">
+                <div class="stage-dot">1</div>
+                <div class="stage-label">Isolate</div>
+                <div class="stage-time" id="time1"></div>
+            </div>
+            <div class="stage" data-stage="2">
+                <div class="stage-dot">2</div>
+                <div class="stage-label">Enhance</div>
+                <div class="stage-time" id="time2"></div>
+            </div>
+            <div class="stage" data-stage="3">
+                <div class="stage-dot">3</div>
+                <div class="stage-label">Master</div>
+                <div class="stage-time" id="time3"></div>
+            </div>
+            <div class="stage" data-stage="4">
+                <div class="stage-dot">4</div>
+                <div class="stage-label">Normalize</div>
+                <div class="stage-time" id="time4"></div>
+            </div>
         </div>
 
         <!-- Main Card -->
         <div class="card">
-            <!-- Upload Zone -->
             <div class="upload-zone" id="uploadZone">
                 <div class="upload-icon">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
@@ -805,8 +793,7 @@
                     </svg>
                 </div>
                 <h3 id="uploadTitle">Drop your audio file here</h3>
-                <p id="uploadHint">or click to browse — WAV, MP3, M4A, FLAC, OGG</p>
-
+                <p id="uploadHint">or click to browse — WAV, MP3, M4A, FLAC, OGG, AAC</p>
                 <div class="file-info" id="fileInfo">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M9 18V5l12-2v13"></path>
@@ -817,11 +804,9 @@
                     <span class="size" id="fileSize"></span>
                     <button class="remove" id="removeFile" title="Remove">&times;</button>
                 </div>
-
                 <input type="file" id="audioInput" accept=".wav,.mp3,.m4a,.flac,.ogg,.aac,.wma" hidden>
             </div>
 
-            <!-- Controls -->
             <div class="controls">
                 <div class="control-group">
                     <label for="platformSelect">Platform</label>
@@ -832,7 +817,6 @@
                         <option value="broadcast">Broadcast · -23 LUFS</option>
                     </select>
                 </div>
-
                 <div class="control-group">
                     <label>Reference (optional)</label>
                     <button class="ref-btn" id="refUploadBtn" type="button">
@@ -847,7 +831,6 @@
                 </div>
             </div>
 
-            <!-- Submit -->
             <button class="submit-btn" id="submitBtn" disabled>
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                     stroke-linejoin="round">
@@ -856,7 +839,6 @@
                 Start Optimizing
             </button>
 
-            <!-- Status -->
             <div class="status-panel" id="statusPanel">
                 <div class="status-header">
                     <div class="status-icon processing" id="statusIcon">
@@ -870,12 +852,7 @@
                         <p id="statusSubtitle">Running the 4-stage pipeline</p>
                     </div>
                 </div>
-                <div class="progress-outer">
-                    <div class="progress-inner indeterminate" id="progressBar"></div>
-                </div>
-
                 <div class="error-msg" id="errorMessage"></div>
-
                 <div class="download-area" id="downloadArea">
                     <button class="download-btn" id="downloadBtn">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -900,37 +877,39 @@
     </div>
 
     <script>
-        const uploadZone = document.getElementById('uploadZone');
-        const audioInput = document.getElementById('audioInput');
-        const fileInfo = document.getElementById('fileInfo');
-        const fileName = document.getElementById('fileName');
-        const fileSize = document.getElementById('fileSize');
-        const removeBtn = document.getElementById('removeFile');
-        const uploadTitle = document.getElementById('uploadTitle');
-        const uploadHint = document.getElementById('uploadHint');
-        const refUploadBtn = document.getElementById('refUploadBtn');
-        const refInput = document.getElementById('refInput');
-        const refText = document.getElementById('refText');
-        const platformSelect = document.getElementById('platformSelect');
-        const submitBtn = document.getElementById('submitBtn');
-        const statusPanel = document.getElementById('statusPanel');
-        const statusIcon = document.getElementById('statusIcon');
-        const statusTitle = document.getElementById('statusTitle');
-        const statusSubtitle = document.getElementById('statusSubtitle');
-        const progressBar = document.getElementById('progressBar');
-        const errorMessage = document.getElementById('errorMessage');
-        const downloadArea = document.getElementById('downloadArea');
-        const downloadBtn = document.getElementById('downloadBtn');
+        const $ = id => document.getElementById(id);
+        const uploadZone = $('uploadZone');
+        const audioInput = $('audioInput');
+        const fileInfo = $('fileInfo');
+        const fileName = $('fileName');
+        const fileSize = $('fileSize');
+        const removeBtn = $('removeFile');
+        const uploadTitle = $('uploadTitle');
+        const uploadHint = $('uploadHint');
+        const refUploadBtn = $('refUploadBtn');
+        const refInput = $('refInput');
+        const refText = $('refText');
+        const platformSelect = $('platformSelect');
+        const submitBtn = $('submitBtn');
+        const statusPanel = $('statusPanel');
+        const statusIcon = $('statusIcon');
+        const statusTitle = $('statusTitle');
+        const statusSubtitle = $('statusSubtitle');
+        const errorMessage = $('errorMessage');
+        const downloadArea = $('downloadArea');
+        const downloadBtn = $('downloadBtn');
+        const timelineProgress = $('timelineProgress');
 
         let selectedFile = null;
         let referenceFile = null;
-        let downloadBlob = null;
+        let currentJobId = null;
+        let stageStartTimes = {};
 
-        // Drag & drop
-        uploadZone.addEventListener('click', () => audioInput.click());
-        uploadZone.addEventListener('dragover', (e) => { e.preventDefault(); uploadZone.classList.add('drag-over'); });
+        // File upload
+        uploadZone.addEventListener('click', () => { if (!uploadZone.classList.contains('processing')) audioInput.click(); });
+        uploadZone.addEventListener('dragover', e => { e.preventDefault(); uploadZone.classList.add('drag-over'); });
         uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('drag-over'));
-        uploadZone.addEventListener('drop', (e) => { e.preventDefault(); uploadZone.classList.remove('drag-over'); if (e.dataTransfer.files.length) setFile(e.dataTransfer.files[0]); });
+        uploadZone.addEventListener('drop', e => { e.preventDefault(); uploadZone.classList.remove('drag-over'); if (e.dataTransfer.files.length) setFile(e.dataTransfer.files[0]); });
         audioInput.addEventListener('change', () => { if (audioInput.files.length) setFile(audioInput.files[0]); });
 
         function setFile(file) {
@@ -944,18 +923,16 @@
             submitBtn.disabled = false;
         }
 
-        removeBtn.addEventListener('click', (e) => {
+        removeBtn.addEventListener('click', e => {
             e.stopPropagation();
-            selectedFile = null;
-            audioInput.value = '';
+            selectedFile = null; audioInput.value = '';
             fileInfo.classList.remove('visible');
             uploadZone.classList.remove('has-file');
             uploadTitle.textContent = 'Drop your audio file here';
-            uploadHint.textContent = 'or click to browse — WAV, MP3, M4A, FLAC, OGG';
+            uploadHint.textContent = 'or click to browse — WAV, MP3, M4A, FLAC, OGG, AAC';
             submitBtn.disabled = true;
         });
 
-        // Reference
         refUploadBtn.addEventListener('click', () => refInput.click());
         refInput.addEventListener('change', () => {
             if (refInput.files.length) {
@@ -971,92 +948,188 @@
             return (bytes / 1048576).toFixed(1) + ' MB';
         }
 
-        function resetPipeline() {
-            document.querySelectorAll('.stage-pill').forEach(s => s.classList.remove('active', 'completed'));
+        // Timeline control
+        function resetTimeline() {
+            document.querySelectorAll('.stage').forEach(s => s.classList.remove('active', 'done'));
+            timelineProgress.style.width = '0%';
+            stageStartTimes = {};
+            [1, 2, 3, 4].forEach(i => { const el = $('time' + i); if (el) el.textContent = ''; });
         }
 
-        function simulateStages() {
-            const steps = document.querySelectorAll('.stage-pill');
-            const durations = [0, 4000, 10000, 18000];
-            steps.forEach((step, i) => {
-                setTimeout(() => {
-                    steps.forEach((s, j) => {
-                        if (j < i) { s.classList.remove('active'); s.classList.add('completed'); }
-                        else if (j === i) { s.classList.add('active'); s.classList.remove('completed'); }
-                    });
-                }, durations[i]);
+        function setTimelineStage(stageNum) {
+            const stages = document.querySelectorAll('.stage');
+            const progressSteps = [0, 10, 37, 63, 90];
+
+            stages.forEach((s, i) => {
+                const num = i + 1;
+                if (num < stageNum) {
+                    s.classList.remove('active');
+                    s.classList.add('done');
+                    s.querySelector('.stage-dot').innerHTML = '✓';
+                    // Show elapsed time
+                    if (stageStartTimes[num] && stageStartTimes[num + 1]) {
+                        const elapsed = ((stageStartTimes[num + 1] - stageStartTimes[num]) / 1000).toFixed(1);
+                        const timeEl = $('time' + num);
+                        if (timeEl) timeEl.textContent = elapsed + 's';
+                    }
+                } else if (num === stageNum) {
+                    s.classList.add('active');
+                    s.classList.remove('done');
+                    s.querySelector('.stage-dot').textContent = num;
+                    stageStartTimes[num] = Date.now();
+                } else {
+                    s.classList.remove('active', 'done');
+                    s.querySelector('.stage-dot').textContent = num;
+                }
             });
+
+            if (stageNum <= 4) {
+                timelineProgress.style.width = progressSteps[stageNum] + '%';
+            }
         }
 
-        // Submit
+        function completeTimeline() {
+            const now = Date.now();
+            document.querySelectorAll('.stage').forEach((s, i) => {
+                const num = i + 1;
+                s.classList.remove('active');
+                s.classList.add('done');
+                s.querySelector('.stage-dot').innerHTML = '✓';
+                if (stageStartTimes[num]) {
+                    const next = stageStartTimes[num + 1] || now;
+                    const elapsed = ((next - stageStartTimes[num]) / 1000).toFixed(1);
+                    const timeEl = $('time' + num);
+                    if (timeEl) timeEl.textContent = elapsed + 's';
+                }
+            });
+            timelineProgress.style.width = '100%';
+        }
+
+        // Submit job
         submitBtn.addEventListener('click', async () => {
             if (!selectedFile) return;
 
+            // Lock UI
             submitBtn.disabled = true;
-            submitBtn.innerHTML = '<div class="spinner"></div> Processing…';
+            submitBtn.innerHTML = '<div class="spinner"></div> Uploading…';
+            uploadZone.classList.add('processing');
             statusPanel.classList.add('visible');
             statusIcon.className = 'status-icon processing';
             statusIcon.innerHTML = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 12a9 9 0 11-6.2-8.56"></path></svg>';
-            statusTitle.textContent = 'Processing your audio…';
-            statusSubtitle.textContent = 'Running 4-stage pipeline — this may take a few minutes';
-            progressBar.className = 'progress-inner indeterminate';
+            statusTitle.textContent = 'Uploading…';
+            statusSubtitle.textContent = 'Sending your file to the pipeline';
             errorMessage.classList.remove('visible');
             downloadArea.classList.remove('visible');
-            resetPipeline();
-            simulateStages();
+            resetTimeline();
 
             const formData = new FormData();
             formData.append('file', selectedFile);
             if (referenceFile) formData.append('reference', referenceFile);
 
             try {
-                const response = await fetch(`/optimize?platform=${platformSelect.value}`, {
+                // Start job
+                const res = await fetch(`/optimize?platform=${platformSelect.value}`, {
                     method: 'POST',
                     body: formData,
                 });
 
-                if (!response.ok) {
-                    const err = await response.json().catch(() => ({ error: 'Unknown error' }));
-                    throw new Error(err.error || `Server error: ${response.status}`);
+                if (!res.ok) {
+                    const err = await res.json().catch(() => ({ error: 'Upload failed' }));
+                    throw new Error(err.error || `Server error: ${res.status}`);
                 }
 
-                downloadBlob = await response.blob();
+                const { job_id } = await res.json();
+                currentJobId = job_id;
 
-                document.querySelectorAll('.stage-pill').forEach(s => { s.classList.remove('active'); s.classList.add('completed'); });
-                statusIcon.className = 'status-icon done';
-                statusIcon.innerHTML = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>';
-                statusTitle.textContent = 'Optimization complete!';
-                statusSubtitle.textContent = '24-bit WAV ready for download';
-                progressBar.className = 'progress-inner complete';
-                downloadArea.classList.add('visible');
+                submitBtn.innerHTML = '<div class="spinner"></div> Processing…';
+                statusTitle.textContent = 'Starting pipeline…';
+                statusSubtitle.textContent = 'Preparing your audio';
+
+                // Listen for progress via SSE
+                const evtSource = new EventSource(`/progress/${job_id}`);
+
+                evtSource.onmessage = (event) => {
+                    const data = JSON.parse(event.data);
+
+                    if (data.status === 'running') {
+                        if (data.stage >= 1 && data.stage <= 4) {
+                            setTimelineStage(data.stage);
+                        }
+                        statusTitle.textContent = data.stage_name || 'Processing…';
+                        const hints = {
+                            0: 'Converting your file to WAV',
+                            1: 'Separating vocals from background — may take a minute',
+                            2: 'AI denoising and frequency restoration — this is the longest step',
+                            3: 'Matching EQ, compression, and stereo width',
+                            4: 'Hitting target loudness for your platform',
+                        };
+                        statusSubtitle.textContent = hints[data.stage] || '';
+                    }
+
+                    if (data.status === 'done') {
+                        evtSource.close();
+                        completeTimeline();
+                        statusIcon.className = 'status-icon done';
+                        statusIcon.innerHTML = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>';
+                        statusTitle.textContent = 'Optimization complete!';
+                        statusSubtitle.textContent = '24-bit WAV ready for download';
+                        downloadArea.classList.add('visible');
+                        unlockUI();
+                    }
+
+                    if (data.status === 'error') {
+                        evtSource.close();
+                        resetTimeline();
+                        statusIcon.className = 'status-icon error-state';
+                        statusIcon.innerHTML = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>';
+                        statusTitle.textContent = 'Something went wrong';
+                        statusSubtitle.textContent = '';
+                        errorMessage.textContent = data.error || 'Unknown error';
+                        errorMessage.classList.add('visible');
+                        unlockUI();
+                    }
+                };
+
+                evtSource.onerror = () => {
+                    evtSource.close();
+                };
 
             } catch (err) {
-                resetPipeline();
+                resetTimeline();
                 statusIcon.className = 'status-icon error-state';
                 statusIcon.innerHTML = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>';
-                statusTitle.textContent = 'Something went wrong';
+                statusTitle.textContent = 'Upload failed';
                 statusSubtitle.textContent = '';
-                progressBar.className = 'progress-inner error';
-                progressBar.style.width = '100%';
                 errorMessage.textContent = err.message;
                 errorMessage.classList.add('visible');
-            } finally {
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg> Start Optimizing';
+                unlockUI();
             }
         });
 
+        function unlockUI() {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg> Start Optimizing';
+            uploadZone.classList.remove('processing');
+        }
+
         // Download
-        downloadBtn.addEventListener('click', () => {
-            if (!downloadBlob) return;
-            const url = URL.createObjectURL(downloadBlob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `optimized_${platformSelect.value}.wav`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
+        downloadBtn.addEventListener('click', async () => {
+            if (!currentJobId) return;
+            try {
+                const res = await fetch(`/download/${currentJobId}`);
+                if (!res.ok) throw new Error('Download failed');
+                const blob = await res.blob();
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `optimized_${platformSelect.value}.wav`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            } catch (err) {
+                alert('Download failed: ' + err.message);
+            }
         });
     </script>
 

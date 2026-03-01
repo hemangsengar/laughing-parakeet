@@ -1,15 +1,22 @@
 """
 FastAPI application — Audio Optimizer Microservice.
 
-POST /optimize  →  accepts an audio file + platform, returns optimized WAV.
+POST /optimize   → start a job, returns { job_id }
+GET  /progress   → SSE stream of stage progress
+GET  /download   → download the final WAV
+GET  /            → frontend UI
 """
 
+import asyncio
+import json
 import logging
 import shutil
+import threading
+import uuid
 from pathlib import Path
 
 from fastapi import FastAPI, File, Query, UploadFile
-from fastapi.responses import FileResponse, JSONResponse
+from fastapi.responses import FileResponse, JSONResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 
 from app.config import BASE_DIR, SUPPORTED_EXTENSIONS, TEMP_DIR, VALID_PLATFORMS
@@ -23,6 +30,20 @@ logging.basicConfig(
     format="%(asctime)s | %(levelname)-7s | %(name)s | %(message)s",
 )
 logger = logging.getLogger(__name__)
+
+# ---------------------------------------------------------------------------
+# Job store  (in-memory — fine for single-instance local use)
+# ---------------------------------------------------------------------------
+jobs: dict[str, dict] = {}
+# Each job: {
+#   "status": "queued" | "running" | "done" | "error",
+#   "stage": 0-4,
+#   "stage_name": str,
+#   "progress": 0-100,
+#   "error": str | None,
+#   "output_path": Path | None,
+#   "platform": str,
+# }
 
 # ---------------------------------------------------------------------------
 # App
@@ -42,109 +63,146 @@ if STATIC_DIR.exists():
     app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 
 
-@app.post("/optimize")
-async def optimize(
-    file: UploadFile = File(..., description="Audio file to optimize (wav/mp3/m4a/flac/ogg)"),
-    platform: str = Query(
-        "youtube",
-        description="Target platform for LUFS normalization",
-        enum=VALID_PLATFORMS,
-    ),
-    reference: UploadFile | None = File(
-        None,
-        description="Optional reference track for mastering (Stage 3)",
-    ),
-):
-    """
-    Optimize an audio file through the full 4-stage pipeline.
+def _run_job(job_id: str, input_path: Path, platform: str, reference_path: Path | None):
+    """Run the pipeline in a background thread, updating job progress."""
+    job = jobs[job_id]
 
-    - **file**: The audio file to process.
-    - **platform**: Target platform — determines LUFS target
-      (`youtube`, `podcast`, `broadcast`, `reels`).
-    - **reference**: Optional reference track for Stage 3 mastering.
-      If omitted, Stage 3 is skipped.
-    """
-    # --- Validate platform ---
-    if platform not in VALID_PLATFORMS:
-        return JSONResponse(
-            status_code=400,
-            content={"error": f"Invalid platform. Choose from: {VALID_PLATFORMS}"},
-        )
+    def on_progress(stage: int, stage_name: str, status: str = "running"):
+        job["stage"] = stage
+        job["stage_name"] = stage_name
+        job["status"] = status
+        logger.info("Job %s — Stage %d: %s", job_id, stage, stage_name)
 
-    # --- Validate file extension ---
-    ext = Path(file.filename or "").suffix.lower()
-    if ext not in SUPPORTED_EXTENSIONS:
-        return JSONResponse(
-            status_code=400,
-            content={
-                "error": f"Unsupported file type '{ext}'. Supported: {sorted(SUPPORTED_EXTENSIONS)}"
-            },
-        )
-
-    # --- Save uploaded file to temp location ---
-    import uuid
-
-    upload_id = uuid.uuid4().hex[:12]
-    upload_dir = TEMP_DIR / f"upload_{upload_id}"
-    upload_dir.mkdir(parents=True, exist_ok=True)
-
-    input_path = upload_dir / f"input{ext}"
-    with open(input_path, "wb") as f:
-        content = await file.read()
-        f.write(content)
-
-    # --- Save optional reference ---
-    reference_path: Path | None = None
-    if reference is not None:
-        ref_ext = Path(reference.filename or "").suffix.lower()
-        reference_path = upload_dir / f"reference{ref_ext}"
-        with open(reference_path, "wb") as f:
-            ref_content = await reference.read()
-            f.write(ref_content)
-
-    # --- Run pipeline ---
     try:
-        logger.info(
-            "Received optimization request: file=%s, platform=%s, reference=%s",
-            file.filename,
-            platform,
-            reference.filename if reference else "none",
-        )
-
+        job["status"] = "running"
         final_path = run_pipeline(
             input_path=input_path,
             platform=platform,
             reference_path=reference_path,
+            on_progress=on_progress,
         )
-
-        return FileResponse(
-            path=str(final_path),
-            media_type="audio/wav",
-            filename=f"optimized_{platform}.wav",
-            background=None,  # don't delete before send completes
-        )
-
+        job["status"] = "done"
+        job["stage"] = 5
+        job["stage_name"] = "Complete"
+        job["output_path"] = final_path
     except Exception as e:
-        logger.exception("Pipeline failed")
-        return JSONResponse(
-            status_code=500,
-            content={"error": f"Pipeline failed: {str(e)}"},
-        )
+        logger.exception("Job %s failed", job_id)
+        job["status"] = "error"
+        job["error"] = str(e)
 
-    finally:
-        # Clean up upload directory (pipeline work dir cleaned separately)
-        shutil.rmtree(upload_dir, ignore_errors=True)
+
+@app.post("/optimize")
+async def optimize(
+    file: UploadFile = File(..., description="Audio file to optimize"),
+    platform: str = Query("youtube", description="Target platform", enum=VALID_PLATFORMS),
+    reference: UploadFile | None = File(None, description="Optional reference track"),
+):
+    """Start an optimization job. Returns a job_id for progress tracking."""
+    # Validate
+    if platform not in VALID_PLATFORMS:
+        return JSONResponse(status_code=400, content={"error": f"Invalid platform. Choose from: {VALID_PLATFORMS}"})
+
+    ext = Path(file.filename or "").suffix.lower()
+    if ext not in SUPPORTED_EXTENSIONS:
+        return JSONResponse(status_code=400, content={"error": f"Unsupported file type '{ext}'."})
+
+    # Save upload
+    job_id = uuid.uuid4().hex[:12]
+    upload_dir = TEMP_DIR / f"upload_{job_id}"
+    upload_dir.mkdir(parents=True, exist_ok=True)
+
+    input_path = upload_dir / f"input{ext}"
+    with open(input_path, "wb") as f:
+        f.write(await file.read())
+
+    reference_path = None
+    if reference is not None:
+        ref_ext = Path(reference.filename or "").suffix.lower()
+        reference_path = upload_dir / f"reference{ref_ext}"
+        with open(reference_path, "wb") as f:
+            f.write(await reference.read())
+
+    # Create job
+    jobs[job_id] = {
+        "status": "queued",
+        "stage": 0,
+        "stage_name": "Queued",
+        "error": None,
+        "output_path": None,
+        "platform": platform,
+    }
+
+    # Run in background thread
+    thread = threading.Thread(
+        target=_run_job,
+        args=(job_id, input_path, platform, reference_path),
+        daemon=True,
+    )
+    thread.start()
+
+    logger.info("Job %s created: file=%s, platform=%s", job_id, file.filename, platform)
+    return {"job_id": job_id}
+
+
+@app.get("/progress/{job_id}")
+async def progress(job_id: str):
+    """
+    Server-Sent Events stream for job progress.
+    Sends a JSON event every second with current stage info.
+    Closes when the job is done or errored.
+    """
+    if job_id not in jobs:
+        return JSONResponse(status_code=404, content={"error": "Job not found"})
+
+    async def event_stream():
+        while True:
+            job = jobs.get(job_id)
+            if job is None:
+                break
+
+            data = {
+                "status": job["status"],
+                "stage": job["stage"],
+                "stage_name": job["stage_name"],
+                "error": job.get("error"),
+            }
+            yield f"data: {json.dumps(data)}\n\n"
+
+            if job["status"] in ("done", "error"):
+                break
+
+            await asyncio.sleep(1)
+
+    return StreamingResponse(
+        event_stream(),
+        media_type="text/event-stream",
+        headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
+    )
+
+
+@app.get("/download/{job_id}")
+async def download(job_id: str):
+    """Download the finished optimized audio file."""
+    job = jobs.get(job_id)
+    if job is None:
+        return JSONResponse(status_code=404, content={"error": "Job not found"})
+    if job["status"] != "done":
+        return JSONResponse(status_code=400, content={"error": f"Job is {job['status']}, not done"})
+
+    return FileResponse(
+        path=str(job["output_path"]),
+        media_type="audio/wav",
+        filename=f"optimized_{job['platform']}.wav",
+    )
 
 
 @app.get("/health")
 async def health():
-    """Health check endpoint."""
     return {"status": "ok"}
 
 
 @app.get("/")
 async def root():
-    """Serve the frontend UI."""
     index_path = STATIC_DIR / "index.html"
     if index_path.exists():
         return FileResponse(str(index_path), media_type="text/html")
