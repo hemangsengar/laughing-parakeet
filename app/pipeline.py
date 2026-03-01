@@ -32,8 +32,7 @@ def _convert_to_wav(input_path: Path, work_dir: Path, label: str = "input") -> P
     cmd = [
         "ffmpeg", "-y",
         "-i", str(input_path),
-        "-acodec", "pcm_s16le",
-        "-ar", "44100",
+        "-acodec", "pcm_s24le",   # 24-bit lossless — preserves full decoded quality
         str(output_path),
     ]
 
