@@ -30,9 +30,9 @@ VALID_PLATFORMS = list(PLATFORM_TARGETS.keys())
 # ---------------------------------------------------------------------------
 # Resemble Enhance defaults
 # ---------------------------------------------------------------------------
-ENHANCE_NFE = 64       # number of function evaluations (quality vs speed)
-ENHANCE_LAMBD = 0.5    # denoiser ↔ enhancer balance (0 = denoise only, 1 = enhance only)
-ENHANCE_TAU = 0.5      # prior temperature
+ENHANCE_NFE = 32       # number of function evaluations (lower = faster + more conservative)
+ENHANCE_LAMBD = 0.9    # denoiser ↔ enhancer crossfade (1.0 = pure denoiser, 0.0 = pure enhancer)
+ENHANCE_TAU = 0.3      # prior temperature (lower = more conservative, less frequency synthesis)
 
 # ---------------------------------------------------------------------------
 # Demucs model
