@@ -68,9 +68,11 @@ def _run_job(job_id: str, input_path: Path, platform: str, reference_path: Path 
     job = jobs[job_id]
 
     def on_progress(stage: int, stage_name: str, status: str = "running"):
+        import time as _time
         job["stage"] = stage
         job["stage_name"] = stage_name
         job["status"] = status
+        job["stage_times"][str(stage)] = _time.time()
         logger.info("Job %s — Stage %d: %s", job_id, stage, stage_name)
 
     try:
@@ -129,7 +131,11 @@ async def optimize(
         "stage_name": "Queued",
         "error": None,
         "output_path": None,
+        "input_path": str(input_path),
+        "filename": file.filename,
         "platform": platform,
+        "start_time": __import__('time').time(),
+        "stage_times": {},
     }
 
     # Run in background thread
@@ -194,6 +200,37 @@ async def download(job_id: str):
         media_type="audio/wav",
         filename=f"optimized_{job['platform']}.wav",
     )
+
+
+@app.get("/original/{job_id}")
+async def original(job_id: str):
+    """Serve the original uploaded audio for before/after comparison."""
+    job = jobs.get(job_id)
+    if job is None:
+        return JSONResponse(status_code=404, content={"error": "Job not found"})
+    input_path = Path(job.get("input_path", ""))
+    if not input_path.exists():
+        return JSONResponse(status_code=404, content={"error": "Original file no longer available"})
+    return FileResponse(path=str(input_path), media_type="audio/mpeg")
+
+
+@app.get("/job/{job_id}")
+async def job_info(job_id: str):
+    """Get full job metadata including timing."""
+    job = jobs.get(job_id)
+    if job is None:
+        return JSONResponse(status_code=404, content={"error": "Job not found"})
+    import time as _time
+    return {
+        "status": job["status"],
+        "stage": job["stage"],
+        "stage_name": job["stage_name"],
+        "filename": job.get("filename"),
+        "platform": job["platform"],
+        "error": job.get("error"),
+        "stage_times": job.get("stage_times", {}),
+        "elapsed": round(_time.time() - job.get("start_time", _time.time()), 1),
+    }
 
 
 @app.get("/health")

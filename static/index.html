@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Audio Optimizer — 4-Stage Pipeline</title>
+    <title>Audio Optimizer — AI-Powered Audio Pipeline</title>
     <meta name="description"
         content="AI-powered audio optimization: vocal isolation, denoising, mastering, and LUFS normalization.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -23,31 +23,35 @@
             --bg: #faf9f7;
             --bg-card: #ffffff;
             --bg-subtle: #f5f4f1;
+            --bg-hover: #f0efec;
             --border: #e8e6e1;
             --border-hover: #d4d1cb;
             --text: #1a1a1a;
             --text-secondary: #6b6b6b;
-            --text-muted: #9e9e9e;
+            --text-muted: #a3a3a3;
             --accent: #6c47ff;
             --accent-hover: #5835e0;
             --accent-light: #ece8ff;
-            --accent-glow: rgba(108, 71, 255, 0.12);
+            --accent-glow: rgba(108, 71, 255, 0.10);
             --success: #10b981;
             --success-bg: #ecfdf5;
             --success-border: #a7f3d0;
             --error: #ef4444;
             --error-bg: #fef2f2;
             --error-border: #fecaca;
-            --stage-1: #7c5cfc;
-            --stage-1-bg: #f0ecff;
-            --stage-2: #0891b2;
-            --stage-2-bg: #ecfeff;
-            --stage-3: #d97706;
-            --stage-3-bg: #fffbeb;
-            --stage-4: #059669;
-            --stage-4-bg: #ecfdf5;
+            --warn: #f59e0b;
+            --warn-bg: #fffbeb;
+            --s1: #7c5cfc;
+            --s1-bg: #f0ecff;
+            --s2: #0891b2;
+            --s2-bg: #ecfeff;
+            --s3: #d97706;
+            --s3-bg: #fffbeb;
+            --s4: #059669;
+            --s4-bg: #ecfdf5;
             --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04);
             --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.08);
             --radius: 12px;
             --radius-lg: 16px;
             --radius-xl: 20px;
@@ -67,60 +71,63 @@
             pointer-events: none;
             z-index: 0;
             background:
-                radial-gradient(ellipse at 20% 0%, rgba(108, 71, 255, 0.07) 0%, transparent 60%),
-                radial-gradient(ellipse at 80% 0%, rgba(251, 191, 36, 0.05) 0%, transparent 50%),
+                radial-gradient(ellipse at 15% 0%, rgba(108, 71, 255, 0.06) 0%, transparent 55%),
+                radial-gradient(ellipse at 85% 0%, rgba(251, 191, 36, 0.04) 0%, transparent 45%),
                 radial-gradient(ellipse at 50% 100%, rgba(16, 185, 129, 0.04) 0%, transparent 50%);
         }
 
-        .container {
+        .app {
             position: relative;
             z-index: 1;
-            max-width: 640px;
+            max-width: 720px;
             margin: 0 auto;
-            padding: 48px 20px 80px;
+            padding: 40px 20px 80px;
         }
 
-        /* Header */
+        /* ─── HEADER ─── */
         .header {
             text-align: center;
-            margin-bottom: 40px;
+            margin-bottom: 36px;
         }
 
-        .logo {
+        .badge {
             display: inline-flex;
             align-items: center;
-            gap: 8px;
-            margin-bottom: 24px;
+            gap: 6px;
+            padding: 5px 12px 5px 6px;
+            border-radius: 999px;
+            background: var(--accent-light);
+            color: var(--accent);
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 20px;
         }
 
-        .logo-icon {
-            width: 36px;
-            height: 36px;
-            border-radius: 10px;
-            background: linear-gradient(135deg, var(--accent), #8b6fff);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 2px 8px rgba(108, 71, 255, 0.3);
+        .badge-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--accent);
+            animation: pulse-dot 2s ease infinite;
         }
 
-        .logo-icon svg {
-            width: 18px;
-            height: 18px;
-            color: white;
-        }
+        @keyframes pulse-dot {
 
-        .logo-text {
-            font-size: 15px;
-            font-weight: 700;
-            letter-spacing: -0.3px;
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.4;
+            }
         }
 
         h1 {
-            font-size: 34px;
+            font-size: 36px;
             font-weight: 800;
-            letter-spacing: -0.8px;
-            line-height: 1.15;
+            letter-spacing: -1px;
+            line-height: 1.12;
             margin-bottom: 12px;
         }
 
@@ -128,208 +135,214 @@
             font-size: 15px;
             color: var(--text-secondary);
             line-height: 1.6;
-            max-width: 460px;
+            max-width: 500px;
             margin: 0 auto;
         }
 
-        /* Pipeline Timeline */
-        .timeline {
-            display: flex;
-            align-items: flex-start;
-            justify-content: space-between;
-            margin: 32px 0 36px;
-            position: relative;
-            padding: 0 12px;
+        /* ─── STAGE CARDS ─── */
+        .stages {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-bottom: 28px;
         }
 
-        .timeline::before {
+        .stage-card {
+            background: var(--bg-card);
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius);
+            padding: 14px 12px;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stage-card::after {
             content: '';
             position: absolute;
-            top: 18px;
-            left: 48px;
-            right: 48px;
+            bottom: 0;
+            left: 0;
+            right: 0;
             height: 3px;
             background: var(--border);
-            border-radius: 2px;
-            z-index: 0;
+            transition: background 0.3s, height 0.3s;
         }
 
-        .timeline-progress {
-            position: absolute;
-            top: 18px;
-            left: 48px;
-            height: 3px;
-            background: linear-gradient(90deg, var(--stage-1), var(--stage-2), var(--stage-3), var(--stage-4));
-            border-radius: 2px;
-            z-index: 1;
-            transition: width 0.6s ease;
-            width: 0%;
+        .stage-card .icon {
+            font-size: 20px;
+            margin-bottom: 6px;
         }
 
-        .stage {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 8px;
-            position: relative;
-            z-index: 2;
-            width: 80px;
-        }
-
-        .stage-dot {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 13px;
-            font-weight: 700;
-            border: 3px solid var(--border);
-            background: white;
-            color: var(--text-muted);
-            transition: all 0.35s ease;
-        }
-
-        .stage-label {
-            font-size: 11.5px;
-            font-weight: 600;
-            text-align: center;
-            color: var(--text-muted);
-            transition: color 0.3s;
-        }
-
-        .stage-time {
+        .stage-card .num {
             font-size: 10px;
+            font-weight: 700;
             color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stage-card .name {
+            font-size: 12.5px;
+            font-weight: 600;
+            margin-top: 2px;
+        }
+
+        .stage-card .time {
+            font-size: 10.5px;
+            color: var(--text-muted);
+            margin-top: 4px;
             opacity: 0;
             transition: opacity 0.3s;
         }
 
-        /* Stage states */
-        .stage.active .stage-dot {
+        .stage-card.active {
             border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-glow);
+        }
+
+        .stage-card.active::after {
+            background: var(--accent);
+            height: 3px;
+        }
+
+        .stage-card.active .name {
             color: var(--accent);
-            box-shadow: 0 0 0 6px var(--accent-glow);
-            animation: pulse-ring 2s ease infinite;
         }
 
-        .stage.active .stage-label {
-            color: var(--accent);
+        .stage-card.active .icon {
+            animation: bounce-icon 1s ease infinite;
         }
 
-        .stage[data-stage="1"].active .stage-dot {
-            border-color: var(--stage-1);
-            color: var(--stage-1);
-            box-shadow: 0 0 0 6px rgba(124, 92, 252, 0.12);
+        .stage-card[data-s="1"].active {
+            border-color: var(--s1);
+            box-shadow: 0 0 0 3px rgba(124, 92, 252, 0.1);
         }
 
-        .stage[data-stage="1"].active .stage-label {
-            color: var(--stage-1);
+        .stage-card[data-s="1"].active::after {
+            background: var(--s1);
         }
 
-        .stage[data-stage="2"].active .stage-dot {
-            border-color: var(--stage-2);
-            color: var(--stage-2);
-            box-shadow: 0 0 0 6px rgba(8, 145, 178, 0.12);
+        .stage-card[data-s="1"].active .name {
+            color: var(--s1);
         }
 
-        .stage[data-stage="2"].active .stage-label {
-            color: var(--stage-2);
+        .stage-card[data-s="2"].active {
+            border-color: var(--s2);
+            box-shadow: 0 0 0 3px rgba(8, 145, 178, 0.1);
         }
 
-        .stage[data-stage="3"].active .stage-dot {
-            border-color: var(--stage-3);
-            color: var(--stage-3);
-            box-shadow: 0 0 0 6px rgba(217, 119, 6, 0.12);
+        .stage-card[data-s="2"].active::after {
+            background: var(--s2);
         }
 
-        .stage[data-stage="3"].active .stage-label {
-            color: var(--stage-3);
+        .stage-card[data-s="2"].active .name {
+            color: var(--s2);
         }
 
-        .stage[data-stage="4"].active .stage-dot {
-            border-color: var(--stage-4);
-            color: var(--stage-4);
-            box-shadow: 0 0 0 6px rgba(5, 150, 105, 0.12);
+        .stage-card[data-s="3"].active {
+            border-color: var(--s3);
+            box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.1);
         }
 
-        .stage[data-stage="4"].active .stage-label {
-            color: var(--stage-4);
+        .stage-card[data-s="3"].active::after {
+            background: var(--s3);
         }
 
-        .stage.done .stage-dot {
-            border-color: var(--success);
+        .stage-card[data-s="3"].active .name {
+            color: var(--s3);
+        }
+
+        .stage-card[data-s="4"].active {
+            border-color: var(--s4);
+            box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.1);
+        }
+
+        .stage-card[data-s="4"].active::after {
+            background: var(--s4);
+        }
+
+        .stage-card[data-s="4"].active .name {
+            color: var(--s4);
+        }
+
+        .stage-card.done {
+            border-color: var(--success-border);
+            background: var(--success-bg);
+        }
+
+        .stage-card.done::after {
             background: var(--success);
-            color: white;
+            height: 3px;
         }
 
-        .stage.done .stage-label {
+        .stage-card.done .name {
             color: var(--success);
         }
 
-        .stage.done .stage-time {
+        .stage-card.done .time {
             opacity: 1;
+            color: var(--success);
         }
 
-        @keyframes pulse-ring {
+        @keyframes bounce-icon {
 
             0%,
             100% {
-                box-shadow: 0 0 0 4px var(--accent-glow);
+                transform: translateY(0)
             }
 
             50% {
-                box-shadow: 0 0 0 8px rgba(108, 71, 255, 0.06);
+                transform: translateY(-2px)
             }
         }
 
-        /* Card */
+        /* ─── MAIN CARD ─── */
         .card {
             background: var(--bg-card);
             border: 1px solid var(--border);
             border-radius: var(--radius-xl);
-            padding: 32px;
+            padding: 28px;
             box-shadow: var(--shadow-md);
         }
 
-        /* Upload Zone */
-        .upload-zone {
+        /* ─── UPLOAD ─── */
+        .upload {
             border: 2px dashed var(--border);
             border-radius: var(--radius-lg);
-            padding: 44px 28px;
+            padding: 40px 24px;
             text-align: center;
             cursor: pointer;
             transition: all 0.2s ease;
             background: var(--bg-subtle);
         }
 
-        .upload-zone:hover {
+        .upload:hover {
             border-color: var(--accent);
             background: var(--accent-light);
         }
 
-        .upload-zone.drag-over {
+        .upload.drag-over {
             border-color: var(--accent);
             background: var(--accent-light);
-            transform: scale(1.01);
+            transform: scale(1.005);
         }
 
-        .upload-zone.has-file {
+        .upload.has-file {
             border-color: var(--success);
             border-style: solid;
             background: var(--success-bg);
         }
 
-        .upload-zone.processing {
+        .upload.locked {
             pointer-events: none;
-            opacity: 0.6;
+            opacity: 0.5;
         }
 
         .upload-icon {
-            width: 52px;
-            height: 52px;
-            margin: 0 auto 14px;
+            width: 48px;
+            height: 48px;
+            margin: 0 auto 12px;
             border-radius: 50%;
             background: white;
             display: flex;
@@ -340,104 +353,103 @@
         }
 
         .upload-icon svg {
-            width: 22px;
-            height: 22px;
+            width: 20px;
+            height: 20px;
             color: var(--accent);
         }
 
-        .upload-zone.has-file .upload-icon {
+        .upload.has-file .upload-icon {
             border-color: var(--success-border);
         }
 
-        .upload-zone.has-file .upload-icon svg {
+        .upload.has-file .upload-icon svg {
             color: var(--success);
         }
 
-        .upload-zone h3 {
-            font-size: 15px;
+        .upload h3 {
+            font-size: 14.5px;
             font-weight: 600;
-            margin-bottom: 6px;
+            margin-bottom: 4px;
         }
 
-        .upload-zone p {
-            font-size: 13px;
+        .upload p {
+            font-size: 12.5px;
             color: var(--text-secondary);
         }
 
-        .file-info {
+        .file-tag {
             display: none;
             align-items: center;
-            gap: 10px;
-            padding: 10px 14px;
+            gap: 8px;
+            padding: 8px 12px;
             background: white;
             border: 1px solid var(--success-border);
-            border-radius: var(--radius);
-            margin-top: 14px;
+            border-radius: 10px;
+            margin-top: 12px;
             text-align: left;
+            font-size: 13px;
         }
 
-        .file-info.visible {
-            display: flex;
+        .file-tag.visible {
+            display: inline-flex;
         }
 
-        .file-info svg {
-            width: 18px;
-            height: 18px;
+        .file-tag svg {
+            width: 16px;
+            height: 16px;
             color: var(--success);
             flex-shrink: 0;
         }
 
-        .file-info .name {
-            font-size: 13px;
+        .file-tag .fname {
             font-weight: 500;
-            flex: 1;
+            max-width: 200px;
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
         }
 
-        .file-info .size {
-            font-size: 12px;
+        .file-tag .fsize {
             color: var(--text-muted);
-            flex-shrink: 0;
+            font-size: 12px;
         }
 
-        .file-info .remove {
+        .file-tag .x {
             background: none;
             border: none;
             color: var(--text-muted);
             cursor: pointer;
-            padding: 2px 6px;
-            font-size: 16px;
-            border-radius: 6px;
-            transition: all 0.15s;
+            padding: 0 4px;
+            font-size: 15px;
+            border-radius: 4px;
+            transition: 0.15s;
         }
 
-        .file-info .remove:hover {
+        .file-tag .x:hover {
             background: var(--error-bg);
             color: var(--error);
         }
 
-        /* Controls */
+        /* ─── CONTROLS ─── */
         .controls {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 14px;
-            margin-top: 20px;
+            gap: 12px;
+            margin-top: 18px;
         }
 
-        .control-group {
+        .ctrl {
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 5px;
         }
 
-        label {
-            font-size: 12.5px;
+        .ctrl label {
+            font-size: 11.5px;
             font-weight: 600;
             color: var(--text-secondary);
             text-transform: uppercase;
-            letter-spacing: 0.3px;
+            letter-spacing: 0.4px;
         }
 
         select,
@@ -447,21 +459,21 @@
             background: var(--bg-subtle);
             border: 1.5px solid var(--border);
             border-radius: 10px;
-            padding: 10px 14px;
-            font-size: 13.5px;
+            padding: 9px 12px;
+            font-size: 13px;
             font-family: inherit;
             font-weight: 500;
             color: var(--text);
             cursor: pointer;
-            transition: all 0.15s ease;
+            transition: 0.15s;
             width: 100%;
         }
 
         select {
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%236b6b6b' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10l-5 5z'/%3E%3C/svg%3E");
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' fill='%236b6b6b' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10l-5 5z'/%3E%3C/svg%3E");
             background-repeat: no-repeat;
-            background-position: right 12px center;
-            padding-right: 32px;
+            background-position: right 10px center;
+            padding-right: 28px;
         }
 
         select:hover,
@@ -479,22 +491,23 @@
         .ref-btn {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
             text-align: left;
         }
 
         .ref-btn svg {
-            width: 15px;
-            height: 15px;
+            width: 14px;
+            height: 14px;
             color: var(--text-muted);
             flex-shrink: 0;
         }
 
-        .ref-btn .ref-text {
+        .ref-btn .rt {
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
-            color: var(--text-secondary);
+            color: var(--text-muted);
+            font-size: 12.5px;
         }
 
         .ref-btn.has-file {
@@ -502,50 +515,50 @@
             background: var(--accent-light);
         }
 
-        .ref-btn.has-file .ref-text {
+        .ref-btn.has-file .rt {
             color: var(--accent);
             font-weight: 600;
         }
 
-        /* Submit */
-        .submit-btn {
+        /* ─── BUTTON ─── */
+        .go-btn {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
+            gap: 8px;
             width: 100%;
-            margin-top: 24px;
-            padding: 14px;
+            margin-top: 20px;
+            padding: 13px;
             border-radius: var(--radius);
             border: none;
-            background: linear-gradient(135deg, #6c47ff 0%, #8b6fff 100%);
+            background: linear-gradient(135deg, #6c47ff, #8b6fff);
             color: white;
             font-family: inherit;
-            font-size: 14.5px;
+            font-size: 14px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: 0.2s;
             box-shadow: 0 2px 8px rgba(108, 71, 255, 0.25);
         }
 
-        .submit-btn:hover:not(:disabled) {
+        .go-btn:hover:not(:disabled) {
             transform: translateY(-1px);
-            box-shadow: 0 6px 24px rgba(108, 71, 255, 0.35);
+            box-shadow: 0 6px 20px rgba(108, 71, 255, 0.3);
         }
 
-        .submit-btn:disabled {
-            opacity: 0.45;
+        .go-btn:disabled {
+            opacity: 0.4;
             cursor: not-allowed;
         }
 
-        .submit-btn svg {
-            width: 17px;
-            height: 17px;
+        .go-btn svg {
+            width: 16px;
+            height: 16px;
         }
 
-        .submit-btn .spinner {
-            width: 17px;
-            height: 17px;
+        .spinner {
+            width: 16px;
+            height: 16px;
             border: 2.5px solid rgba(255, 255, 255, 0.3);
             border-top-color: white;
             border-radius: 50%;
@@ -558,30 +571,29 @@
             }
         }
 
-        /* Status Panel */
-        .status-panel {
+        /* ─── STATUS ─── */
+        .status {
             display: none;
-            margin-top: 20px;
-            padding: 20px;
+            margin-top: 18px;
+            padding: 18px;
             border-radius: var(--radius-lg);
             background: var(--bg-subtle);
             border: 1px solid var(--border);
         }
 
-        .status-panel.visible {
+        .status.visible {
             display: block;
         }
 
-        .status-header {
+        .status-row {
             display: flex;
             align-items: center;
-            gap: 12px;
-            margin-bottom: 8px;
+            gap: 10px;
         }
 
-        .status-icon {
-            width: 38px;
-            height: 38px;
+        .status-dot {
+            width: 34px;
+            height: 34px;
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -589,121 +601,288 @@
             flex-shrink: 0;
         }
 
-        .status-icon.processing {
+        .status-dot.proc {
             background: var(--accent-light);
         }
 
-        .status-icon.processing svg {
+        .status-dot.proc svg {
             color: var(--accent);
             animation: spin 2s linear infinite;
         }
 
-        .status-icon.done {
+        .status-dot.ok {
             background: var(--success-bg);
         }
 
-        .status-icon.done svg {
+        .status-dot.ok svg {
             color: var(--success);
         }
 
-        .status-icon.error-state {
+        .status-dot.fail {
             background: var(--error-bg);
         }
 
-        .status-icon.error-state svg {
+        .status-dot.fail svg {
             color: var(--error);
         }
 
-        .status-text h3 {
-            font-size: 14px;
+        .status-info h3 {
+            font-size: 13.5px;
             font-weight: 600;
         }
 
-        .status-text p {
-            font-size: 12.5px;
+        .status-info p {
+            font-size: 12px;
             color: var(--text-secondary);
             margin-top: 2px;
         }
 
-        .error-msg {
-            margin-top: 12px;
-            padding: 10px 14px;
-            border-radius: 10px;
+        .err-box {
+            margin-top: 10px;
+            padding: 10px 12px;
+            border-radius: 8px;
             background: var(--error-bg);
             border: 1px solid var(--error-border);
             color: var(--error);
-            font-size: 13px;
-            line-height: 1.5;
+            font-size: 12.5px;
             display: none;
+            word-break: break-word;
         }
 
-        .error-msg.visible {
+        .err-box.visible {
             display: block;
         }
 
-        /* Download */
-        .download-area {
+        /* ─── RESULT ─── */
+        .result {
             display: none;
-            margin-top: 14px;
+            margin-top: 18px;
         }
 
-        .download-area.visible {
+        .result.visible {
             display: block;
         }
 
-        .download-btn {
+        .result-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 16px;
+            background: var(--success-bg);
+            border: 1px solid var(--success-border);
+            border-radius: var(--radius) var(--radius) 0 0;
+        }
+
+        .result-header svg {
+            width: 20px;
+            height: 20px;
+            color: var(--success);
+        }
+
+        .result-header h3 {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--success);
+        }
+
+        .result-header .stats {
+            margin-left: auto;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .player-section {
+            border: 1px solid var(--border);
+            border-top: none;
+            border-radius: 0 0 var(--radius) var(--radius);
+            overflow: hidden;
+        }
+
+        .player-tab-bar {
+            display: flex;
+            background: var(--bg-subtle);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .player-tab {
+            flex: 1;
+            padding: 10px;
+            text-align: center;
+            font-size: 12.5px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            background: none;
+            color: var(--text-secondary);
+            transition: 0.2s;
+            position: relative;
+        }
+
+        .player-tab.active {
+            color: var(--accent);
+            background: white;
+        }
+
+        .player-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--accent);
+        }
+
+        .player-body {
+            padding: 16px;
+            background: white;
+        }
+
+        .waveform-container {
+            height: 64px;
+            background: var(--bg-subtle);
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 12px;
+            position: relative;
+        }
+
+        .waveform-canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        .waveform-overlay {
+            position: absolute;
+            inset: 0;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .audio-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .play-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: none;
+            background: var(--accent);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: 0.15s;
+            flex-shrink: 0;
+        }
+
+        .play-btn:hover {
+            background: var(--accent-hover);
+            transform: scale(1.05);
+        }
+
+        .play-btn svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        .play-btn.playing {
+            background: var(--accent-hover);
+        }
+
+        .time-display {
+            font-size: 11.5px;
+            color: var(--text-muted);
+            font-variant-numeric: tabular-nums;
+            min-width: 70px;
+        }
+
+        .seek-bar {
+            flex: 1;
+            -webkit-appearance: none;
+            height: 4px;
+            background: var(--border);
+            border-radius: 2px;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .seek-bar::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--accent);
+            cursor: pointer;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+        }
+
+        .dl-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
             width: 100%;
-            padding: 12px;
+            padding: 11px;
+            margin-top: 14px;
             border-radius: 10px;
             border: 1.5px solid var(--success);
             background: var(--success-bg);
             color: var(--success);
             font-family: inherit;
-            font-size: 13.5px;
+            font-size: 13px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.15s ease;
+            transition: 0.15s;
         }
 
-        .download-btn:hover {
+        .dl-btn:hover {
             background: #d1fae5;
             transform: translateY(-1px);
         }
 
-        .download-btn svg {
-            width: 17px;
-            height: 17px;
+        .dl-btn svg {
+            width: 16px;
+            height: 16px;
         }
 
-        /* Footer */
+        /* ─── FOOTER ─── */
         .footer {
             text-align: center;
-            margin-top: 40px;
-            font-size: 12px;
+            margin-top: 36px;
+            font-size: 11.5px;
             color: var(--text-muted);
         }
 
         .footer a {
             color: var(--text-secondary);
             text-decoration: none;
-            transition: color 0.15s;
         }
 
         .footer a:hover {
             color: var(--accent);
         }
 
-        @media (max-width: 520px) {
-            .container {
-                padding: 32px 16px 60px;
+        /* ─── RESPONSIVE ─── */
+        @media (max-width: 560px) {
+            .app {
+                padding: 28px 14px 60px;
             }
 
             h1 {
                 font-size: 26px;
+            }
+
+            .stages {
+                grid-template-columns: repeat(2, 1fr);
             }
 
             .controls {
@@ -714,21 +893,8 @@
                 padding: 20px;
             }
 
-            .stage {
-                width: 65px;
-            }
-
-            .stage-label {
-                font-size: 10px;
-            }
-
-            .timeline::before {
-                left: 36px;
-                right: 36px;
-            }
-
-            .timeline-progress {
-                left: 36px;
+            .stage-card {
+                padding: 10px 8px;
             }
         }
     </style>
@@ -737,53 +903,48 @@
 <body>
 
     <div class="bg-glow"></div>
+    <div class="app">
 
-    <div class="container">
+        <!-- Header -->
         <header class="header">
-            <div class="logo">
-                <div class="logo-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
-                        stroke-linecap="round">
-                        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
-                        <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
-                    </svg>
-                </div>
-                <span class="logo-text">Audio Optimizer</span>
-            </div>
-            <h1>Optimize any audio in<br>one click</h1>
-            <p class="subtitle">
-                Isolate vocals, remove noise, master against a reference, and hit broadcast-ready loudness.
-            </p>
+            <div class="badge"><span class="badge-dot"></span> AI-Powered Pipeline</div>
+            <h1>Audio Optimizer</h1>
+            <p class="subtitle">Upload any audio file. We'll isolate vocals, remove noise, master it, and normalize
+                loudness — all automatically.</p>
         </header>
 
-        <!-- Pipeline Timeline -->
-        <div class="timeline" id="timeline">
-            <div class="timeline-progress" id="timelineProgress"></div>
-            <div class="stage" data-stage="1">
-                <div class="stage-dot">1</div>
-                <div class="stage-label">Isolate</div>
-                <div class="stage-time" id="time1"></div>
+        <!-- Stage Cards -->
+        <div class="stages" id="stages">
+            <div class="stage-card" data-s="1">
+                <div class="icon">🎤</div>
+                <div class="num">Stage 1</div>
+                <div class="name">Isolate</div>
+                <div class="time" id="t1"></div>
             </div>
-            <div class="stage" data-stage="2">
-                <div class="stage-dot">2</div>
-                <div class="stage-label">Enhance</div>
-                <div class="stage-time" id="time2"></div>
+            <div class="stage-card" data-s="2">
+                <div class="icon">✨</div>
+                <div class="num">Stage 2</div>
+                <div class="name">Denoise</div>
+                <div class="time" id="t2"></div>
             </div>
-            <div class="stage" data-stage="3">
-                <div class="stage-dot">3</div>
-                <div class="stage-label">Master</div>
-                <div class="stage-time" id="time3"></div>
+            <div class="stage-card" data-s="3">
+                <div class="icon">🎛️</div>
+                <div class="num">Stage 3</div>
+                <div class="name">Master</div>
+                <div class="time" id="t3"></div>
             </div>
-            <div class="stage" data-stage="4">
-                <div class="stage-dot">4</div>
-                <div class="stage-label">Normalize</div>
-                <div class="stage-time" id="time4"></div>
+            <div class="stage-card" data-s="4">
+                <div class="icon">📊</div>
+                <div class="num">Stage 4</div>
+                <div class="name">Normalize</div>
+                <div class="time" id="t4"></div>
             </div>
         </div>
 
         <!-- Main Card -->
         <div class="card">
-            <div class="upload-zone" id="uploadZone">
+            <!-- Upload -->
+            <div class="upload" id="uploadZone">
                 <div class="upload-icon">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                         stroke-linejoin="round">
@@ -792,83 +953,116 @@
                         <line x1="12" y1="3" x2="12" y2="15"></line>
                     </svg>
                 </div>
-                <h3 id="uploadTitle">Drop your audio file here</h3>
-                <p id="uploadHint">or click to browse — WAV, MP3, M4A, FLAC, OGG, AAC</p>
-                <div class="file-info" id="fileInfo">
+                <h3 id="upTitle">Drop your audio file here</h3>
+                <p id="upHint">WAV · MP3 · M4A · FLAC · OGG · AAC</p>
+                <div class="file-tag" id="fileTag">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M9 18V5l12-2v13"></path>
                         <circle cx="6" cy="18" r="3"></circle>
                         <circle cx="18" cy="16" r="3"></circle>
                     </svg>
-                    <span class="name" id="fileName"></span>
-                    <span class="size" id="fileSize"></span>
-                    <button class="remove" id="removeFile" title="Remove">&times;</button>
+                    <span class="fname" id="fName"></span>
+                    <span class="fsize" id="fSize"></span>
+                    <button class="x" id="removeFile">&times;</button>
                 </div>
                 <input type="file" id="audioInput" accept=".wav,.mp3,.m4a,.flac,.ogg,.aac,.wma" hidden>
             </div>
 
+            <!-- Controls -->
             <div class="controls">
-                <div class="control-group">
-                    <label for="platformSelect">Platform</label>
-                    <select id="platformSelect">
+                <div class="ctrl">
+                    <label for="platform">Platform</label>
+                    <select id="platform">
                         <option value="youtube">YouTube · -14 LUFS</option>
                         <option value="podcast">Podcast · -16 LUFS</option>
                         <option value="reels">Reels / Shorts · -14 LUFS</option>
                         <option value="broadcast">Broadcast · -23 LUFS</option>
                     </select>
                 </div>
-                <div class="control-group">
-                    <label>Reference (optional)</label>
-                    <button class="ref-btn" id="refUploadBtn" type="button">
+                <div class="ctrl">
+                    <label>Reference (opt.)</label>
+                    <button class="ref-btn" id="refBtn" type="button">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M9 18V5l12-2v13"></path>
                             <circle cx="6" cy="18" r="3"></circle>
                             <circle cx="18" cy="16" r="3"></circle>
                         </svg>
-                        <span class="ref-text" id="refText">Choose track…</span>
+                        <span class="rt" id="refText">Choose track…</span>
                     </button>
                     <input type="file" id="refInput" accept=".wav,.mp3,.m4a,.flac,.ogg" hidden>
                 </div>
             </div>
 
-            <button class="submit-btn" id="submitBtn" disabled>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                    stroke-linejoin="round">
+            <!-- Go -->
+            <button class="go-btn" id="goBtn" disabled>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <polygon points="5 3 19 12 5 21 5 3"></polygon>
                 </svg>
                 Start Optimizing
             </button>
 
-            <div class="status-panel" id="statusPanel">
-                <div class="status-header">
-                    <div class="status-icon processing" id="statusIcon">
-                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor"
+            <!-- Status -->
+            <div class="status" id="statusPanel">
+                <div class="status-row">
+                    <div class="status-dot proc" id="sDot">
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor"
                             stroke-width="2.5">
                             <path d="M21 12a9 9 0 11-6.2-8.56"></path>
                         </svg>
                     </div>
-                    <div class="status-text">
-                        <h3 id="statusTitle">Processing…</h3>
-                        <p id="statusSubtitle">Running the 4-stage pipeline</p>
+                    <div class="status-info">
+                        <h3 id="sTitle">Processing…</h3>
+                        <p id="sSub">Uploading your file</p>
                     </div>
                 </div>
-                <div class="error-msg" id="errorMessage"></div>
-                <div class="download-area" id="downloadArea">
-                    <button class="download-btn" id="downloadBtn">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                            stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                            <polyline points="7 10 12 15 17 10"></polyline>
-                            <line x1="12" y1="15" x2="12" y2="3"></line>
-                        </svg>
-                        Download Optimized Audio
-                    </button>
+                <div class="err-box" id="errBox"></div>
+            </div>
+
+            <!-- Result -->
+            <div class="result" id="resultPanel">
+                <div class="result-header">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                    <h3>Optimization Complete</h3>
+                    <span class="stats" id="totalTime"></span>
                 </div>
+                <div class="player-section">
+                    <div class="player-tab-bar">
+                        <button class="player-tab active" data-target="optimized" id="tabOptimized">🔊
+                            Optimized</button>
+                        <button class="player-tab" data-target="original" id="tabOriginal">📁 Original</button>
+                    </div>
+                    <div class="player-body">
+                        <div class="waveform-container">
+                            <canvas class="waveform-canvas" id="waveCanvas"></canvas>
+                            <div class="waveform-overlay" id="waveOverlay">Audio waveform</div>
+                        </div>
+                        <div class="audio-controls">
+                            <button class="play-btn" id="playBtn">
+                                <svg viewBox="0 0 24 24" fill="currentColor" id="playIcon">
+                                    <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                                </svg>
+                            </button>
+                            <input type="range" class="seek-bar" id="seekBar" min="0" max="1000" value="0">
+                            <span class="time-display" id="timeDisplay">0:00 / 0:00</span>
+                        </div>
+                    </div>
+                </div>
+                <button class="dl-btn" id="dlBtn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="7 10 12 15 17 10"></polyline>
+                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                    </svg>
+                    Download Optimized WAV
+                </button>
             </div>
         </div>
 
         <footer class="footer">
-            Built with
+            Powered by
             <a href="https://github.com/facebookresearch/demucs" target="_blank">Demucs</a> ·
             <a href="https://github.com/resemble-ai/resemble-enhance" target="_blank">Resemble Enhance</a> ·
             <a href="https://github.com/sergree/matchering" target="_blank">Matchering</a> ·
@@ -878,258 +1072,305 @@
 
     <script>
         const $ = id => document.getElementById(id);
-        const uploadZone = $('uploadZone');
-        const audioInput = $('audioInput');
-        const fileInfo = $('fileInfo');
-        const fileName = $('fileName');
-        const fileSize = $('fileSize');
-        const removeBtn = $('removeFile');
-        const uploadTitle = $('uploadTitle');
-        const uploadHint = $('uploadHint');
-        const refUploadBtn = $('refUploadBtn');
-        const refInput = $('refInput');
-        const refText = $('refText');
-        const platformSelect = $('platformSelect');
-        const submitBtn = $('submitBtn');
-        const statusPanel = $('statusPanel');
-        const statusIcon = $('statusIcon');
-        const statusTitle = $('statusTitle');
-        const statusSubtitle = $('statusSubtitle');
-        const errorMessage = $('errorMessage');
-        const downloadArea = $('downloadArea');
-        const downloadBtn = $('downloadBtn');
-        const timelineProgress = $('timelineProgress');
+        const uploadZone = $('uploadZone'), audioInput = $('audioInput');
+        const fileTag = $('fileTag'), fName = $('fName'), fSize = $('fSize');
+        const upTitle = $('upTitle'), upHint = $('upHint');
+        const refBtn = $('refBtn'), refInput = $('refInput'), refText = $('refText');
+        const platform = $('platform'), goBtn = $('goBtn');
+        const statusPanel = $('statusPanel'), sDot = $('sDot'), sTitle = $('sTitle'), sSub = $('sSub'), errBox = $('errBox');
+        const resultPanel = $('resultPanel'), totalTime = $('totalTime');
+        const playBtn = $('playBtn'), playIcon = $('playIcon'), seekBar = $('seekBar'), timeDisplay = $('timeDisplay');
+        const waveCanvas = $('waveCanvas'), waveOverlay = $('waveOverlay');
+        const dlBtn = $('dlBtn'), tabOptimized = $('tabOptimized'), tabOriginal = $('tabOriginal');
 
-        let selectedFile = null;
-        let referenceFile = null;
-        let currentJobId = null;
-        let stageStartTimes = {};
+        let selectedFile = null, referenceFile = null, jobId = null;
+        let audioCtx = null, optimizedBlob = null, originalBlob = null;
+        let currentAudio = null, isPlaying = false, activeTab = 'optimized';
 
-        // File upload
-        uploadZone.addEventListener('click', () => { if (!uploadZone.classList.contains('processing')) audioInput.click(); });
+        // ─── Upload ───
+        uploadZone.addEventListener('click', () => !uploadZone.classList.contains('locked') && audioInput.click());
         uploadZone.addEventListener('dragover', e => { e.preventDefault(); uploadZone.classList.add('drag-over'); });
         uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('drag-over'));
-        uploadZone.addEventListener('drop', e => { e.preventDefault(); uploadZone.classList.remove('drag-over'); if (e.dataTransfer.files.length) setFile(e.dataTransfer.files[0]); });
-        audioInput.addEventListener('change', () => { if (audioInput.files.length) setFile(audioInput.files[0]); });
+        uploadZone.addEventListener('drop', e => { e.preventDefault(); uploadZone.classList.remove('drag-over'); e.dataTransfer.files.length && setFile(e.dataTransfer.files[0]); });
+        audioInput.addEventListener('change', () => audioInput.files.length && setFile(audioInput.files[0]));
 
-        function setFile(file) {
-            selectedFile = file;
-            fileName.textContent = file.name;
-            fileSize.textContent = formatSize(file.size);
-            fileInfo.classList.add('visible');
+        function setFile(f) {
+            selectedFile = f;
+            fName.textContent = f.name;
+            fSize.textContent = fmt(f.size);
+            fileTag.classList.add('visible');
             uploadZone.classList.add('has-file');
-            uploadTitle.textContent = 'File ready';
-            uploadHint.textContent = 'Click to change';
-            submitBtn.disabled = false;
+            upTitle.textContent = 'File ready';
+            upHint.textContent = 'Click to change';
+            goBtn.disabled = false;
         }
 
-        removeBtn.addEventListener('click', e => {
+        $('removeFile').addEventListener('click', e => {
             e.stopPropagation();
             selectedFile = null; audioInput.value = '';
-            fileInfo.classList.remove('visible');
+            fileTag.classList.remove('visible');
             uploadZone.classList.remove('has-file');
-            uploadTitle.textContent = 'Drop your audio file here';
-            uploadHint.textContent = 'or click to browse — WAV, MP3, M4A, FLAC, OGG, AAC';
-            submitBtn.disabled = true;
+            upTitle.textContent = 'Drop your audio file here';
+            upHint.textContent = 'WAV · MP3 · M4A · FLAC · OGG · AAC';
+            goBtn.disabled = true;
         });
 
-        refUploadBtn.addEventListener('click', () => refInput.click());
+        refBtn.addEventListener('click', () => refInput.click());
         refInput.addEventListener('change', () => {
             if (refInput.files.length) {
                 referenceFile = refInput.files[0];
                 refText.textContent = referenceFile.name;
-                refUploadBtn.classList.add('has-file');
+                refBtn.classList.add('has-file');
             }
         });
 
-        function formatSize(bytes) {
-            if (bytes < 1024) return bytes + ' B';
-            if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
-            return (bytes / 1048576).toFixed(1) + ' MB';
+        function fmt(b) { return b < 1048576 ? (b / 1024).toFixed(1) + ' KB' : (b / 1048576).toFixed(1) + ' MB'; }
+        function fmtTime(s) { const m = Math.floor(s / 60); return m + ':' + String(Math.floor(s % 60)).padStart(2, '0'); }
+
+        // ─── Stages ───
+        const stageCards = document.querySelectorAll('.stage-card');
+        let stageTimes = {};
+
+        function resetStages() {
+            stageCards.forEach(c => { c.classList.remove('active', 'done'); });
+            [1, 2, 3, 4].forEach(i => { const el = $('t' + i); if (el) el.textContent = ''; });
+            stageTimes = {};
         }
 
-        // Timeline control
-        function resetTimeline() {
-            document.querySelectorAll('.stage').forEach(s => s.classList.remove('active', 'done'));
-            timelineProgress.style.width = '0%';
-            stageStartTimes = {};
-            [1, 2, 3, 4].forEach(i => { const el = $('time' + i); if (el) el.textContent = ''; });
-        }
-
-        function setTimelineStage(stageNum) {
-            const stages = document.querySelectorAll('.stage');
-            const progressSteps = [0, 10, 37, 63, 90];
-
-            stages.forEach((s, i) => {
+        function setStage(n) {
+            stageTimes[n] = Date.now();
+            stageCards.forEach((c, i) => {
                 const num = i + 1;
-                if (num < stageNum) {
-                    s.classList.remove('active');
-                    s.classList.add('done');
-                    s.querySelector('.stage-dot').innerHTML = '✓';
-                    // Show elapsed time
-                    if (stageStartTimes[num] && stageStartTimes[num + 1]) {
-                        const elapsed = ((stageStartTimes[num + 1] - stageStartTimes[num]) / 1000).toFixed(1);
-                        const timeEl = $('time' + num);
-                        if (timeEl) timeEl.textContent = elapsed + 's';
+                if (num < n) {
+                    c.classList.remove('active'); c.classList.add('done');
+                    if (stageTimes[num] && stageTimes[num + 1]) {
+                        $('t' + num).textContent = ((stageTimes[num + 1] - stageTimes[num]) / 1000).toFixed(1) + 's';
                     }
-                } else if (num === stageNum) {
-                    s.classList.add('active');
-                    s.classList.remove('done');
-                    s.querySelector('.stage-dot').textContent = num;
-                    stageStartTimes[num] = Date.now();
+                } else if (num === n) {
+                    c.classList.add('active'); c.classList.remove('done');
                 } else {
-                    s.classList.remove('active', 'done');
-                    s.querySelector('.stage-dot').textContent = num;
+                    c.classList.remove('active', 'done');
                 }
             });
-
-            if (stageNum <= 4) {
-                timelineProgress.style.width = progressSteps[stageNum] + '%';
-            }
         }
 
-        function completeTimeline() {
+        function completeStages() {
             const now = Date.now();
-            document.querySelectorAll('.stage').forEach((s, i) => {
+            stageCards.forEach((c, i) => {
                 const num = i + 1;
-                s.classList.remove('active');
-                s.classList.add('done');
-                s.querySelector('.stage-dot').innerHTML = '✓';
-                if (stageStartTimes[num]) {
-                    const next = stageStartTimes[num + 1] || now;
-                    const elapsed = ((next - stageStartTimes[num]) / 1000).toFixed(1);
-                    const timeEl = $('time' + num);
-                    if (timeEl) timeEl.textContent = elapsed + 's';
+                c.classList.remove('active'); c.classList.add('done');
+                if (stageTimes[num]) {
+                    const next = stageTimes[num + 1] || now;
+                    $('t' + num).textContent = ((next - stageTimes[num]) / 1000).toFixed(1) + 's';
                 }
             });
-            timelineProgress.style.width = '100%';
         }
 
-        // Submit job
-        submitBtn.addEventListener('click', async () => {
+        // ─── Submit ───
+        goBtn.addEventListener('click', async () => {
             if (!selectedFile) return;
-
             // Lock UI
-            submitBtn.disabled = true;
-            submitBtn.innerHTML = '<div class="spinner"></div> Uploading…';
-            uploadZone.classList.add('processing');
+            goBtn.disabled = true;
+            goBtn.innerHTML = '<div class="spinner"></div> Uploading…';
+            uploadZone.classList.add('locked');
             statusPanel.classList.add('visible');
-            statusIcon.className = 'status-icon processing';
-            statusIcon.innerHTML = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 12a9 9 0 11-6.2-8.56"></path></svg>';
-            statusTitle.textContent = 'Uploading…';
-            statusSubtitle.textContent = 'Sending your file to the pipeline';
-            errorMessage.classList.remove('visible');
-            downloadArea.classList.remove('visible');
-            resetTimeline();
+            resultPanel.classList.remove('visible');
+            errBox.classList.remove('visible');
+            setStatusProc('Uploading…', 'Sending your file to the server');
+            resetStages();
+            stopAudio();
 
-            const formData = new FormData();
-            formData.append('file', selectedFile);
-            if (referenceFile) formData.append('reference', referenceFile);
+            const form = new FormData();
+            form.append('file', selectedFile);
+            if (referenceFile) form.append('reference', referenceFile);
 
             try {
-                // Start job
-                const res = await fetch(`/optimize?platform=${platformSelect.value}`, {
-                    method: 'POST',
-                    body: formData,
-                });
-
-                if (!res.ok) {
-                    const err = await res.json().catch(() => ({ error: 'Upload failed' }));
-                    throw new Error(err.error || `Server error: ${res.status}`);
-                }
-
+                const res = await fetch(`/optimize?platform=${platform.value}`, { method: 'POST', body: form });
+                if (!res.ok) { const e = await res.json().catch(() => ({})); throw new Error(e.error || 'Upload failed'); }
                 const { job_id } = await res.json();
-                currentJobId = job_id;
+                jobId = job_id;
 
-                submitBtn.innerHTML = '<div class="spinner"></div> Processing…';
-                statusTitle.textContent = 'Starting pipeline…';
-                statusSubtitle.textContent = 'Preparing your audio';
+                goBtn.innerHTML = '<div class="spinner"></div> Processing…';
+                setStatusProc('Starting pipeline…', 'Preparing your audio');
 
-                // Listen for progress via SSE
-                const evtSource = new EventSource(`/progress/${job_id}`);
-
-                evtSource.onmessage = (event) => {
-                    const data = JSON.parse(event.data);
-
-                    if (data.status === 'running') {
-                        if (data.stage >= 1 && data.stage <= 4) {
-                            setTimelineStage(data.stage);
-                        }
-                        statusTitle.textContent = data.stage_name || 'Processing…';
+                // SSE progress
+                const es = new EventSource(`/progress/${job_id}`);
+                es.onmessage = async (ev) => {
+                    const d = JSON.parse(ev.data);
+                    if (d.status === 'running') {
+                        if (d.stage >= 1 && d.stage <= 4) setStage(d.stage);
                         const hints = {
-                            0: 'Converting your file to WAV',
-                            1: 'Separating vocals from background — may take a minute',
-                            2: 'AI denoising and frequency restoration — this is the longest step',
+                            0: 'Converting to WAV format',
+                            1: 'Separating vocals from background audio',
+                            2: 'Removing noise while preserving voice quality',
                             3: 'Matching EQ, compression, and stereo width',
                             4: 'Hitting target loudness for your platform',
                         };
-                        statusSubtitle.textContent = hints[data.stage] || '';
+                        setStatusProc(d.stage_name || 'Processing…', hints[d.stage] || '');
                     }
-
-                    if (data.status === 'done') {
-                        evtSource.close();
-                        completeTimeline();
-                        statusIcon.className = 'status-icon done';
-                        statusIcon.innerHTML = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>';
-                        statusTitle.textContent = 'Optimization complete!';
-                        statusSubtitle.textContent = '24-bit WAV ready for download';
-                        downloadArea.classList.add('visible');
-                        unlockUI();
+                    if (d.status === 'done') {
+                        es.close();
+                        completeStages();
+                        // Fetch job info for timing
+                        const info = await fetch(`/job/${job_id}`).then(r => r.json()).catch(() => null);
+                        if (info) totalTime.textContent = info.elapsed + 's total';
+                        // Fetch both audio blobs
+                        const [optRes, origRes] = await Promise.all([
+                            fetch(`/download/${job_id}`),
+                            fetch(`/original/${job_id}`),
+                        ]);
+                        optimizedBlob = await optRes.blob();
+                        originalBlob = await origRes.blob();
+                        statusPanel.classList.remove('visible');
+                        resultPanel.classList.add('visible');
+                        switchTab('optimized');
+                        unlock();
                     }
-
-                    if (data.status === 'error') {
-                        evtSource.close();
-                        resetTimeline();
-                        statusIcon.className = 'status-icon error-state';
-                        statusIcon.innerHTML = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>';
-                        statusTitle.textContent = 'Something went wrong';
-                        statusSubtitle.textContent = '';
-                        errorMessage.textContent = data.error || 'Unknown error';
-                        errorMessage.classList.add('visible');
-                        unlockUI();
+                    if (d.status === 'error') {
+                        es.close();
+                        resetStages();
+                        setStatusFail(d.error || 'Unknown error');
+                        unlock();
                     }
                 };
-
-                evtSource.onerror = () => {
-                    evtSource.close();
-                };
-
+                es.onerror = () => es.close();
             } catch (err) {
-                resetTimeline();
-                statusIcon.className = 'status-icon error-state';
-                statusIcon.innerHTML = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>';
-                statusTitle.textContent = 'Upload failed';
-                statusSubtitle.textContent = '';
-                errorMessage.textContent = err.message;
-                errorMessage.classList.add('visible');
-                unlockUI();
+                setStatusFail(err.message);
+                unlock();
             }
         });
 
-        function unlockUI() {
-            submitBtn.disabled = false;
-            submitBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg> Start Optimizing';
-            uploadZone.classList.remove('processing');
+        function setStatusProc(title, sub) {
+            sDot.className = 'status-dot proc';
+            sDot.innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 12a9 9 0 11-6.2-8.56"></path></svg>';
+            sTitle.textContent = title; sSub.textContent = sub;
+        }
+        function setStatusFail(msg) {
+            sDot.className = 'status-dot fail';
+            sDot.innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>';
+            sTitle.textContent = 'Something went wrong'; sSub.textContent = '';
+            errBox.textContent = msg; errBox.classList.add('visible');
+        }
+        function unlock() {
+            goBtn.disabled = false;
+            goBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg> Start Optimizing';
+            uploadZone.classList.remove('locked');
         }
 
-        // Download
-        downloadBtn.addEventListener('click', async () => {
-            if (!currentJobId) return;
-            try {
-                const res = await fetch(`/download/${currentJobId}`);
-                if (!res.ok) throw new Error('Download failed');
-                const blob = await res.blob();
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `optimized_${platformSelect.value}.wav`;
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                URL.revokeObjectURL(url);
-            } catch (err) {
-                alert('Download failed: ' + err.message);
+        // ─── Audio Player ───
+        function switchTab(tab) {
+            activeTab = tab;
+            stopAudio();
+            tabOptimized.classList.toggle('active', tab === 'optimized');
+            tabOriginal.classList.toggle('active', tab === 'original');
+            const blob = tab === 'optimized' ? optimizedBlob : originalBlob;
+            if (blob) {
+                loadAudio(blob);
+                drawWaveform(blob);
             }
+        }
+        tabOptimized.addEventListener('click', () => switchTab('optimized'));
+        tabOriginal.addEventListener('click', () => switchTab('original'));
+
+        function loadAudio(blob) {
+            stopAudio();
+            currentAudio = new Audio(URL.createObjectURL(blob));
+            currentAudio.addEventListener('timeupdate', () => {
+                if (currentAudio.duration) {
+                    seekBar.value = (currentAudio.currentTime / currentAudio.duration) * 1000;
+                    timeDisplay.textContent = fmtTime(currentAudio.currentTime) + ' / ' + fmtTime(currentAudio.duration);
+                }
+            });
+            currentAudio.addEventListener('ended', () => {
+                isPlaying = false;
+                playIcon.innerHTML = '<polygon points="5 3 19 12 5 21 5 3"></polygon>';
+                playBtn.classList.remove('playing');
+            });
+        }
+
+        function stopAudio() {
+            if (currentAudio) { currentAudio.pause(); currentAudio = null; }
+            isPlaying = false;
+            playIcon.innerHTML = '<polygon points="5 3 19 12 5 21 5 3"></polygon>';
+            playBtn.classList.remove('playing');
+            seekBar.value = 0;
+            timeDisplay.textContent = '0:00 / 0:00';
+        }
+
+        playBtn.addEventListener('click', () => {
+            if (!currentAudio) return;
+            if (isPlaying) {
+                currentAudio.pause();
+                isPlaying = false;
+                playIcon.innerHTML = '<polygon points="5 3 19 12 5 21 5 3"></polygon>';
+                playBtn.classList.remove('playing');
+            } else {
+                currentAudio.play();
+                isPlaying = true;
+                playIcon.innerHTML = '<rect x="6" y="4" width="4" height="16" rx="1"></rect><rect x="14" y="4" width="4" height="16" rx="1"></rect>';
+                playBtn.classList.add('playing');
+            }
+        });
+
+        seekBar.addEventListener('input', () => {
+            if (currentAudio && currentAudio.duration) {
+                currentAudio.currentTime = (seekBar.value / 1000) * currentAudio.duration;
+            }
+        });
+
+        async function drawWaveform(blob) {
+            waveOverlay.style.display = 'flex';
+            waveOverlay.textContent = 'Loading waveform…';
+            try {
+                if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const buf = await blob.arrayBuffer();
+                const decoded = await audioCtx.decodeAudioData(buf);
+                const data = decoded.getChannelData(0);
+
+                const canvas = waveCanvas;
+                const dpr = window.devicePixelRatio || 1;
+                const w = canvas.parentElement.clientWidth;
+                const h = canvas.parentElement.clientHeight;
+                canvas.width = w * dpr;
+                canvas.height = h * dpr;
+                canvas.style.width = w + 'px';
+                canvas.style.height = h + 'px';
+
+                const ctx = canvas.getContext('2d');
+                ctx.scale(dpr, dpr);
+                ctx.clearRect(0, 0, w, h);
+
+                const step = Math.ceil(data.length / w);
+                const mid = h / 2;
+                const gradient = ctx.createLinearGradient(0, 0, w, 0);
+                const isOpt = activeTab === 'optimized';
+                gradient.addColorStop(0, isOpt ? '#6c47ff' : '#6b6b6b');
+                gradient.addColorStop(1, isOpt ? '#8b6fff' : '#9e9e9e');
+                ctx.fillStyle = gradient;
+
+                for (let i = 0; i < w; i++) {
+                    let min = 1, max = -1;
+                    for (let j = 0; j < step; j++) {
+                        const v = data[i * step + j] || 0;
+                        if (v < min) min = v;
+                        if (v > max) max = v;
+                    }
+                    const barH = Math.max(1, (max - min) * mid * 0.9);
+                    ctx.fillRect(i, mid - barH / 2, 1, barH);
+                }
+                waveOverlay.style.display = 'none';
+            } catch (e) {
+                waveOverlay.textContent = 'Could not render waveform';
+            }
+        }
+
+        // ─── Download ───
+        dlBtn.addEventListener('click', () => {
+            if (!optimizedBlob || !jobId) return;
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(optimizedBlob);
+            a.download = `optimized_${platform.value}.wav`;
+            document.body.appendChild(a); a.click(); document.body.removeChild(a);
         });
     </script>
 
