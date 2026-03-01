@@ -17,11 +17,12 @@ logger = logging.getLogger(__name__)
 
 
 def _get_device() -> str:
-    """Auto-detect best available device."""
+    """Auto-detect best available device.
+    Note: MPS (Apple Silicon) is not used because Resemble Enhance
+    has compatibility issues with MPS tensors. Falls back to CPU.
+    """
     if torch.cuda.is_available():
         return "cuda"
-    if hasattr(torch.backends, "mps") and torch.backends.mps.is_available():
-        return "mps"
     return "cpu"
 
 
