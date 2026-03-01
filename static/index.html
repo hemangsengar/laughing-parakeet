@@ -1,166 +1,273 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Audio Optimizer — 4-Stage Pipeline</title>
-    <meta name="description" content="AI-powered audio optimization: vocal isolation, denoising, mastering, and LUFS normalization.">
+    <meta name="description"
+        content="AI-powered audio optimization: vocal isolation, denoising, mastering, and LUFS normalization.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
     <style>
-        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
 
         :root {
-            --bg-primary: #0a0a0f;
-            --bg-secondary: #12121a;
-            --bg-card: #16161f;
-            --bg-card-hover: #1c1c28;
-            --border: #2a2a3a;
-            --border-accent: #3d3d55;
-            --text-primary: #eeeef0;
-            --text-secondary: #9898a8;
-            --text-muted: #5e5e72;
-            --accent: #7c5cfc;
-            --accent-light: #9b80ff;
-            --accent-glow: rgba(124, 92, 252, 0.25);
-            --success: #34d399;
-            --success-glow: rgba(52, 211, 153, 0.2);
-            --warning: #fbbf24;
-            --error: #f87171;
-            --error-glow: rgba(248, 113, 113, 0.15);
+            --bg: #faf9f7;
+            --bg-card: #ffffff;
+            --bg-subtle: #f3f2ef;
+            --border: #e8e6e1;
+            --border-hover: #d4d1cb;
+            --text: #1a1a1a;
+            --text-secondary: #6b6b6b;
+            --text-muted: #9e9e9e;
+            --accent: #6c47ff;
+            --accent-hover: #5835e0;
+            --accent-light: #ece8ff;
+            --accent-glow: rgba(108, 71, 255, 0.12);
+            --success: #10b981;
+            --success-bg: #ecfdf5;
+            --success-border: #a7f3d0;
+            --error: #ef4444;
+            --error-bg: #fef2f2;
+            --error-border: #fecaca;
             --stage-1: #7c5cfc;
-            --stage-2: #06b6d4;
-            --stage-3: #f59e0b;
-            --stage-4: #34d399;
+            --stage-1-bg: #f0ecff;
+            --stage-2: #0891b2;
+            --stage-2-bg: #ecfeff;
+            --stage-3: #d97706;
+            --stage-3-bg: #fffbeb;
+            --stage-4: #059669;
+            --stage-4-bg: #ecfdf5;
+            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
+            --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.08);
             --radius: 12px;
             --radius-lg: 16px;
+            --radius-xl: 20px;
         }
 
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: var(--bg-primary);
-            color: var(--text-primary);
+            background: var(--bg);
+            color: var(--text);
             min-height: 100vh;
-            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
         }
 
-        /* Ambient background glow */
-        body::before {
-            content: '';
+        /* Warm gradient background */
+        .bg-glow {
             position: fixed;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(ellipse at 30% 20%, rgba(124, 92, 252, 0.06) 0%, transparent 50%),
-                        radial-gradient(ellipse at 70% 60%, rgba(6, 182, 212, 0.04) 0%, transparent 50%);
+            inset: 0;
             pointer-events: none;
             z-index: 0;
+            background:
+                radial-gradient(ellipse at 20% 0%, rgba(108, 71, 255, 0.07) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 0%, rgba(251, 191, 36, 0.06) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 100%, rgba(16, 185, 129, 0.05) 0%, transparent 50%);
         }
 
         .container {
             position: relative;
             z-index: 1;
-            max-width: 720px;
+            max-width: 640px;
             margin: 0 auto;
-            padding: 48px 24px 80px;
+            padding: 48px 20px 80px;
         }
 
         /* ---- Header ---- */
         .header {
             text-align: center;
-            margin-bottom: 48px;
+            margin-bottom: 40px;
         }
 
-        .header-badge {
+        .logo {
             display: inline-flex;
             align-items: center;
-            gap: 6px;
-            padding: 6px 14px;
-            border-radius: 999px;
-            background: rgba(124, 92, 252, 0.1);
-            border: 1px solid rgba(124, 92, 252, 0.2);
-            font-size: 12px;
-            font-weight: 600;
-            color: var(--accent-light);
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
-            margin-bottom: 20px;
+            gap: 8px;
+            margin-bottom: 24px;
         }
 
-        .header-badge svg { width: 14px; height: 14px; }
+        .logo-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, var(--accent), #8b6fff);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(108, 71, 255, 0.3);
+        }
+
+        .logo-icon svg {
+            width: 18px;
+            height: 18px;
+            color: white;
+        }
+
+        .logo-text {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text);
+            letter-spacing: -0.3px;
+        }
 
         h1 {
-            font-size: 36px;
+            font-size: 34px;
             font-weight: 800;
-            letter-spacing: -0.5px;
+            letter-spacing: -0.8px;
+            line-height: 1.15;
             margin-bottom: 12px;
-            background: linear-gradient(135deg, var(--text-primary) 0%, var(--accent-light) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            color: var(--text);
         }
 
         .subtitle {
             font-size: 15px;
             color: var(--text-secondary);
             line-height: 1.6;
+            max-width: 460px;
+            margin: 0 auto;
         }
 
-        /* ---- Pipeline Steps Visual ---- */
-        .pipeline-visual {
+        /* ---- Pipeline Visual ---- */
+        .pipeline {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
-            margin: 32px 0 40px;
+            gap: 6px;
+            margin: 32px 0 36px;
             flex-wrap: wrap;
         }
 
-        .pipe-step {
+        .stage-pill {
             display: flex;
             align-items: center;
-            gap: 8px;
-            padding: 8px 14px;
+            gap: 6px;
+            padding: 7px 14px;
             border-radius: 999px;
-            font-size: 12px;
+            font-size: 12.5px;
             font-weight: 600;
-            border: 1px solid;
-            transition: all 0.3s ease;
-            opacity: 0.5;
+            border: 1.5px solid;
+            transition: all 0.35s ease;
+            opacity: 0.65;
         }
 
-        .pipe-step.active { opacity: 1; transform: scale(1.05); }
-        .pipe-step.completed { opacity: 0.8; }
+        .stage-pill.active {
+            opacity: 1;
+            transform: scale(1.06);
+        }
 
-        .pipe-step[data-stage="1"] { background: rgba(124, 92, 252, 0.1); border-color: rgba(124, 92, 252, 0.25); color: var(--stage-1); }
-        .pipe-step[data-stage="1"].active { background: rgba(124, 92, 252, 0.2); box-shadow: 0 0 20px rgba(124, 92, 252, 0.2); }
-        .pipe-step[data-stage="2"] { background: rgba(6, 182, 212, 0.1); border-color: rgba(6, 182, 212, 0.25); color: var(--stage-2); }
-        .pipe-step[data-stage="2"].active { background: rgba(6, 182, 212, 0.2); box-shadow: 0 0 20px rgba(6, 182, 212, 0.2); }
-        .pipe-step[data-stage="3"] { background: rgba(245, 158, 11, 0.1); border-color: rgba(245, 158, 11, 0.25); color: var(--stage-3); }
-        .pipe-step[data-stage="3"].active { background: rgba(245, 158, 11, 0.2); box-shadow: 0 0 20px rgba(245, 158, 11, 0.2); }
-        .pipe-step[data-stage="4"] { background: rgba(52, 211, 153, 0.1); border-color: rgba(52, 211, 153, 0.25); color: var(--stage-4); }
-        .pipe-step[data-stage="4"].active { background: rgba(52, 211, 153, 0.2); box-shadow: 0 0 20px rgba(52, 211, 153, 0.2); }
+        .stage-pill.completed {
+            opacity: 0.85;
+        }
+
+        .stage-pill .num {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: 700;
+            color: white;
+        }
+
+        .stage-pill[data-stage="1"] {
+            background: var(--stage-1-bg);
+            border-color: rgba(124, 92, 252, 0.2);
+            color: var(--stage-1);
+        }
+
+        .stage-pill[data-stage="1"] .num {
+            background: var(--stage-1);
+        }
+
+        .stage-pill[data-stage="1"].active {
+            box-shadow: 0 0 0 4px rgba(124, 92, 252, 0.1);
+            border-color: var(--stage-1);
+        }
+
+        .stage-pill[data-stage="2"] {
+            background: var(--stage-2-bg);
+            border-color: rgba(8, 145, 178, 0.2);
+            color: var(--stage-2);
+        }
+
+        .stage-pill[data-stage="2"] .num {
+            background: var(--stage-2);
+        }
+
+        .stage-pill[data-stage="2"].active {
+            box-shadow: 0 0 0 4px rgba(8, 145, 178, 0.1);
+            border-color: var(--stage-2);
+        }
+
+        .stage-pill[data-stage="3"] {
+            background: var(--stage-3-bg);
+            border-color: rgba(217, 119, 6, 0.2);
+            color: var(--stage-3);
+        }
+
+        .stage-pill[data-stage="3"] .num {
+            background: var(--stage-3);
+        }
+
+        .stage-pill[data-stage="3"].active {
+            box-shadow: 0 0 0 4px rgba(217, 119, 6, 0.1);
+            border-color: var(--stage-3);
+        }
+
+        .stage-pill[data-stage="4"] {
+            background: var(--stage-4-bg);
+            border-color: rgba(5, 150, 105, 0.2);
+            color: var(--stage-4);
+        }
+
+        .stage-pill[data-stage="4"] .num {
+            background: var(--stage-4);
+        }
+
+        .stage-pill[data-stage="4"].active {
+            box-shadow: 0 0 0 4px rgba(5, 150, 105, 0.1);
+            border-color: var(--stage-4);
+        }
+
+        .stage-pill.active .num {
+            animation: pulse-num 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse-num {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.2);
+            }
+        }
 
         .pipe-arrow {
             color: var(--text-muted);
-            font-size: 14px;
+            font-size: 13px;
         }
 
-        .pipe-step .dot {
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background: currentColor;
-        }
-
-        .pipe-step.active .dot {
-            animation: pulse-dot 1.5s ease-in-out infinite;
-        }
-
-        @keyframes pulse-dot {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.5; transform: scale(1.6); }
+        /* ---- Main Card ---- */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-xl);
+            padding: 32px;
+            box-shadow: var(--shadow-md);
         }
 
         /* ---- Upload Zone ---- */
@@ -168,93 +275,97 @@
             position: relative;
             border: 2px dashed var(--border);
             border-radius: var(--radius-lg);
-            padding: 48px 32px;
+            padding: 44px 28px;
             text-align: center;
             cursor: pointer;
-            transition: all 0.25s ease;
-            background: var(--bg-card);
-            overflow: hidden;
+            transition: all 0.2s ease;
+            background: var(--bg-subtle);
         }
 
-        .upload-zone::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: radial-gradient(circle at center, var(--accent-glow) 0%, transparent 70%);
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .upload-zone:hover, .upload-zone.drag-over {
+        .upload-zone:hover {
             border-color: var(--accent);
-            background: var(--bg-card-hover);
+            background: var(--accent-light);
         }
 
-        .upload-zone:hover::before, .upload-zone.drag-over::before {
-            opacity: 1;
+        .upload-zone.drag-over {
+            border-color: var(--accent);
+            background: var(--accent-light);
+            transform: scale(1.01);
         }
 
         .upload-zone.has-file {
             border-color: var(--success);
             border-style: solid;
+            background: var(--success-bg);
         }
 
         .upload-icon {
-            position: relative;
-            z-index: 1;
-            width: 56px;
-            height: 56px;
-            margin: 0 auto 16px;
+            width: 52px;
+            height: 52px;
+            margin: 0 auto 14px;
             border-radius: 50%;
-            background: rgba(124, 92, 252, 0.1);
+            background: white;
             display: flex;
             align-items: center;
             justify-content: center;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border);
         }
 
         .upload-icon svg {
-            width: 24px;
-            height: 24px;
-            color: var(--accent-light);
+            width: 22px;
+            height: 22px;
+            color: var(--accent);
+        }
+
+        .upload-zone.has-file .upload-icon {
+            border-color: var(--success-border);
+        }
+
+        .upload-zone.has-file .upload-icon svg {
+            color: var(--success);
         }
 
         .upload-zone h3 {
-            position: relative;
-            z-index: 1;
-            font-size: 16px;
+            font-size: 15px;
             font-weight: 600;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
+            color: var(--text);
         }
 
         .upload-zone p {
-            position: relative;
-            z-index: 1;
             font-size: 13px;
             color: var(--text-secondary);
         }
 
+        /* File info tag */
         .file-info {
-            position: relative;
-            z-index: 1;
             display: none;
             align-items: center;
-            gap: 12px;
-            padding: 12px 16px;
-            background: rgba(52, 211, 153, 0.08);
-            border: 1px solid rgba(52, 211, 153, 0.2);
+            gap: 10px;
+            padding: 10px 14px;
+            background: white;
+            border: 1px solid var(--success-border);
             border-radius: var(--radius);
-            margin-top: 16px;
+            margin-top: 14px;
+            text-align: left;
         }
 
-        .file-info.visible { display: flex; }
+        .file-info.visible {
+            display: flex;
+        }
 
-        .file-info svg { width: 20px; height: 20px; color: var(--success); flex-shrink: 0; }
+        .file-info svg {
+            width: 18px;
+            height: 18px;
+            color: var(--success);
+            flex-shrink: 0;
+        }
 
         .file-info .name {
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 500;
             flex-grow: 1;
-            text-align: left;
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
@@ -262,7 +373,7 @@
 
         .file-info .size {
             font-size: 12px;
-            color: var(--text-secondary);
+            color: var(--text-muted);
             flex-shrink: 0;
         }
 
@@ -271,63 +382,68 @@
             border: none;
             color: var(--text-muted);
             cursor: pointer;
-            padding: 4px;
+            padding: 2px 6px;
             font-size: 16px;
             line-height: 1;
-            transition: color 0.2s;
+            border-radius: 6px;
+            transition: all 0.15s;
         }
 
-        .file-info .remove:hover { color: var(--error); }
+        .file-info .remove:hover {
+            background: var(--error-bg);
+            color: var(--error);
+        }
 
-        /* ---- Form Controls ---- */
+        /* ---- Controls ---- */
         .controls {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 16px;
-            margin-top: 24px;
+            gap: 14px;
+            margin-top: 20px;
         }
 
         .control-group {
             display: flex;
             flex-direction: column;
-            gap: 8px;
-        }
-
-        .control-group.full-width {
-            grid-column: 1 / -1;
+            gap: 6px;
         }
 
         label {
-            font-size: 13px;
-            font-weight: 500;
+            font-size: 12.5px;
+            font-weight: 600;
             color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
         }
 
-        select, .ref-upload-btn {
+        select,
+        .ref-btn {
             appearance: none;
             -webkit-appearance: none;
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 12px 16px;
-            font-size: 14px;
+            background: var(--bg-subtle);
+            border: 1.5px solid var(--border);
+            border-radius: 10px;
+            padding: 10px 14px;
+            font-size: 13.5px;
             font-family: inherit;
-            color: var(--text-primary);
+            font-weight: 500;
+            color: var(--text);
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: all 0.15s ease;
             width: 100%;
         }
 
         select {
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%239898a8' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10l-5 5z'/%3E%3C/svg%3E");
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%236b6b6b' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10l-5 5z'/%3E%3C/svg%3E");
             background-repeat: no-repeat;
-            background-position: right 14px center;
-            padding-right: 36px;
+            background-position: right 12px center;
+            padding-right: 32px;
         }
 
-        select:hover, .ref-upload-btn:hover {
-            border-color: var(--border-accent);
-            background-color: var(--bg-card-hover);
+        select:hover,
+        .ref-btn:hover {
+            border-color: var(--border-hover);
+            background: white;
         }
 
         select:focus {
@@ -336,23 +452,40 @@
             box-shadow: 0 0 0 3px var(--accent-glow);
         }
 
-        .ref-upload-btn {
+        .ref-btn {
             display: flex;
             align-items: center;
             gap: 8px;
             text-align: left;
         }
 
-        .ref-upload-btn svg { width: 16px; height: 16px; color: var(--text-muted); flex-shrink: 0; }
+        .ref-btn svg {
+            width: 15px;
+            height: 15px;
+            color: var(--text-muted);
+            flex-shrink: 0;
+        }
 
-        .ref-upload-btn .ref-text {
+        .ref-btn .ref-text {
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
+            color: var(--text-secondary);
         }
 
-        .ref-upload-btn.has-file { border-color: var(--accent); color: var(--accent-light); }
-        .ref-upload-btn.has-file svg { color: var(--accent-light); }
+        .ref-btn.has-file {
+            border-color: var(--accent);
+            background: var(--accent-light);
+        }
+
+        .ref-btn.has-file .ref-text {
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        .ref-btn.has-file svg {
+            color: var(--accent);
+        }
 
         /* ---- Submit Button ---- */
         .submit-btn {
@@ -361,203 +494,221 @@
             justify-content: center;
             gap: 10px;
             width: 100%;
-            margin-top: 28px;
-            padding: 16px;
+            margin-top: 24px;
+            padding: 14px;
             border-radius: var(--radius);
             border: none;
-            background: linear-gradient(135deg, var(--accent) 0%, #6444e0 100%);
+            background: linear-gradient(135deg, #6c47ff 0%, #8b6fff 100%);
             color: white;
             font-family: inherit;
-            font-size: 15px;
+            font-size: 14.5px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.25s ease;
-            position: relative;
-            overflow: hidden;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 8px rgba(108, 71, 255, 0.25);
         }
-
-        .submit-btn::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, transparent 50%);
-            opacity: 0;
-            transition: opacity 0.25s;
-        }
-
-        .submit-btn:hover:not(:disabled)::before { opacity: 1; }
 
         .submit-btn:hover:not(:disabled) {
             transform: translateY(-1px);
-            box-shadow: 0 8px 32px rgba(124, 92, 252, 0.35);
+            box-shadow: 0 6px 24px rgba(108, 71, 255, 0.35);
+        }
+
+        .submit-btn:active:not(:disabled) {
+            transform: translateY(0);
         }
 
         .submit-btn:disabled {
-            opacity: 0.4;
+            opacity: 0.45;
             cursor: not-allowed;
         }
 
-        .submit-btn svg { width: 18px; height: 18px; }
-
-        .submit-btn .spinner {
-            width: 18px;
-            height: 18px;
-            border: 2px solid rgba(255,255,255,0.3);
-            border-top-color: white;
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
+        .submit-btn svg {
+            width: 17px;
+            height: 17px;
         }
 
-        @keyframes spin { to { transform: rotate(360deg); } }
+        .submit-btn .spinner {
+            width: 17px;
+            height: 17px;
+            border: 2.5px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+        }
 
-        /* ---- Status / Log ---- */
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* ---- Status Panel ---- */
         .status-panel {
             display: none;
-            margin-top: 24px;
+            margin-top: 20px;
             padding: 20px;
             border-radius: var(--radius-lg);
-            background: var(--bg-card);
+            background: var(--bg-subtle);
             border: 1px solid var(--border);
         }
 
-        .status-panel.visible { display: block; }
+        .status-panel.visible {
+            display: block;
+        }
 
         .status-header {
             display: flex;
             align-items: center;
-            gap: 10px;
-            margin-bottom: 16px;
+            gap: 12px;
+            margin-bottom: 14px;
         }
 
-        .status-header .status-icon {
-            width: 36px;
-            height: 36px;
+        .status-icon {
+            width: 38px;
+            height: 38px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
+            flex-shrink: 0;
         }
 
-        .status-header .status-icon.processing {
-            background: rgba(124, 92, 252, 0.15);
+        .status-icon.processing {
+            background: var(--accent-light);
         }
 
-        .status-header .status-icon.processing svg {
-            color: var(--accent-light);
+        .status-icon.processing svg {
+            color: var(--accent);
             animation: spin 2s linear infinite;
         }
 
-        .status-header .status-icon.done {
-            background: var(--success-glow);
+        .status-icon.done {
+            background: var(--success-bg);
         }
 
-        .status-header .status-icon.done svg { color: var(--success); }
-
-        .status-header .status-icon.error-icon {
-            background: var(--error-glow);
+        .status-icon.done svg {
+            color: var(--success);
         }
 
-        .status-header .status-icon.error-icon svg { color: var(--error); }
+        .status-icon.error-state {
+            background: var(--error-bg);
+        }
 
-        .status-header .status-text h3 {
-            font-size: 15px;
+        .status-icon.error-state svg {
+            color: var(--error);
+        }
+
+        .status-text h3 {
+            font-size: 14px;
             font-weight: 600;
         }
 
-        .status-header .status-text p {
-            font-size: 13px;
+        .status-text p {
+            font-size: 12.5px;
             color: var(--text-secondary);
             margin-top: 2px;
         }
 
-        /* ---- Progress bar ---- */
-        .progress-bar-outer {
-            height: 6px;
-            background: rgba(255,255,255,0.06);
+        /* Progress bar */
+        .progress-outer {
+            height: 5px;
+            background: var(--border);
             border-radius: 999px;
             overflow: hidden;
-            margin-bottom: 16px;
         }
 
-        .progress-bar-inner {
+        .progress-inner {
             height: 100%;
             width: 0%;
             border-radius: 999px;
-            background: linear-gradient(90deg, var(--accent), var(--accent-light));
-            transition: width 0.5s ease;
+            background: linear-gradient(90deg, var(--accent), var(--accent-hover));
+            transition: width 0.4s ease;
         }
 
-        .progress-bar-inner.indeterminate {
+        .progress-inner.indeterminate {
             width: 30%;
-            animation: indeterminate 1.5s ease-in-out infinite;
+            animation: slide 1.5s ease-in-out infinite;
         }
 
-        @keyframes indeterminate {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(400%); }
+        @keyframes slide {
+            0% {
+                transform: translateX(-100%);
+            }
+
+            100% {
+                transform: translateX(400%);
+            }
         }
 
-        .progress-bar-inner.complete {
+        .progress-inner.complete {
             width: 100%;
-            background: linear-gradient(90deg, var(--success), #5eead4);
+            background: linear-gradient(90deg, var(--success), #34d399);
         }
 
-        .progress-bar-inner.error {
+        .progress-inner.error {
             background: var(--error);
-        }
-
-        /* ---- Download area ---- */
-        .download-area {
-            display: none;
-            margin-top: 16px;
-        }
-
-        .download-area.visible { display: block; }
-
-        .download-btn {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
             width: 100%;
-            padding: 14px;
-            border-radius: var(--radius);
-            border: 1px solid var(--success);
-            background: rgba(52, 211, 153, 0.08);
-            color: var(--success);
-            font-family: inherit;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s ease;
         }
 
-        .download-btn:hover {
-            background: rgba(52, 211, 153, 0.15);
-            transform: translateY(-1px);
-        }
-
-        .download-btn svg { width: 18px; height: 18px; }
-
-        /* ---- Error message ---- */
-        .error-message {
+        /* Error */
+        .error-msg {
             margin-top: 12px;
-            padding: 12px 16px;
-            border-radius: var(--radius);
-            background: var(--error-glow);
-            border: 1px solid rgba(248, 113, 113, 0.2);
+            padding: 10px 14px;
+            border-radius: 10px;
+            background: var(--error-bg);
+            border: 1px solid var(--error-border);
             color: var(--error);
             font-size: 13px;
             line-height: 1.5;
             display: none;
         }
 
-        .error-message.visible { display: block; }
+        .error-msg.visible {
+            display: block;
+        }
+
+        /* Download */
+        .download-area {
+            display: none;
+            margin-top: 14px;
+        }
+
+        .download-area.visible {
+            display: block;
+        }
+
+        .download-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            padding: 12px;
+            border-radius: 10px;
+            border: 1.5px solid var(--success);
+            background: var(--success-bg);
+            color: var(--success);
+            font-family: inherit;
+            font-size: 13.5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .download-btn:hover {
+            background: #d1fae5;
+            transform: translateY(-1px);
+        }
+
+        .download-btn svg {
+            width: 17px;
+            height: 17px;
+        }
 
         /* ---- Footer ---- */
         .footer {
             text-align: center;
-            margin-top: 48px;
+            margin-top: 40px;
             font-size: 12px;
             color: var(--text-muted);
         }
@@ -565,354 +716,350 @@
         .footer a {
             color: var(--text-secondary);
             text-decoration: none;
+            transition: color 0.15s;
         }
 
-        .footer a:hover { color: var(--accent-light); }
+        .footer a:hover {
+            color: var(--accent);
+        }
 
         /* ---- Responsive ---- */
         @media (max-width: 520px) {
-            .container { padding: 32px 16px 60px; }
-            h1 { font-size: 28px; }
-            .controls { grid-template-columns: 1fr; }
-            .pipeline-visual { gap: 6px; }
-            .pipe-step { font-size: 11px; padding: 6px 10px; }
-            .pipe-arrow { display: none; }
+            .container {
+                padding: 32px 16px 60px;
+            }
+
+            h1 {
+                font-size: 26px;
+            }
+
+            .controls {
+                grid-template-columns: 1fr;
+            }
+
+            .pipeline {
+                gap: 4px;
+            }
+
+            .stage-pill {
+                font-size: 11px;
+                padding: 5px 10px;
+            }
+
+            .pipe-arrow {
+                display: none;
+            }
+
+            .card {
+                padding: 20px;
+            }
         }
     </style>
 </head>
+
 <body>
 
-<div class="container">
-    <!-- Header -->
-    <header class="header">
-        <div class="header-badge">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
-                <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
-                <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
-            </svg>
-            Audio Optimizer
-        </div>
-        <h1>4-Stage Audio Pipeline</h1>
-        <p class="subtitle">
-            Drop in any audio file — isolate vocals, remove noise, master against a reference, and normalize loudness. Get broadcast-ready 24-bit WAV in one click.
-        </p>
-    </header>
+    <div class="bg-glow"></div>
 
-    <!-- Pipeline Steps -->
-    <div class="pipeline-visual" id="pipelineVisual">
-        <div class="pipe-step" data-stage="1">
-            <span class="dot"></span> Isolate
-        </div>
-        <span class="pipe-arrow">→</span>
-        <div class="pipe-step" data-stage="2">
-            <span class="dot"></span> Enhance
-        </div>
-        <span class="pipe-arrow">→</span>
-        <div class="pipe-step" data-stage="3">
-            <span class="dot"></span> Master
-        </div>
-        <span class="pipe-arrow">→</span>
-        <div class="pipe-step" data-stage="4">
-            <span class="dot"></span> Normalize
-        </div>
-    </div>
-
-    <!-- Upload Zone -->
-    <div class="upload-zone" id="uploadZone">
-        <div class="upload-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                <polyline points="17 8 12 3 7 8"></polyline>
-                <line x1="12" y1="3" x2="12" y2="15"></line>
-            </svg>
-        </div>
-        <h3 id="uploadTitle">Drop your audio file here</h3>
-        <p id="uploadHint">or click to browse — WAV, MP3, M4A, FLAC, OGG supported</p>
-
-        <div class="file-info" id="fileInfo">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M9 18V5l12-2v13"></path>
-                <circle cx="6" cy="18" r="3"></circle>
-                <circle cx="18" cy="16" r="3"></circle>
-            </svg>
-            <span class="name" id="fileName"></span>
-            <span class="size" id="fileSize"></span>
-            <button class="remove" id="removeFile" title="Remove file">&times;</button>
-        </div>
-
-        <input type="file" id="audioInput" accept=".wav,.mp3,.m4a,.flac,.ogg,.aac,.wma" hidden>
-    </div>
-
-    <!-- Controls -->
-    <div class="controls">
-        <div class="control-group">
-            <label for="platformSelect">Target Platform</label>
-            <select id="platformSelect">
-                <option value="youtube">YouTube — -14 LUFS</option>
-                <option value="podcast">Podcast — -16 LUFS</option>
-                <option value="reels">Reels / Shorts — -14 LUFS</option>
-                <option value="broadcast">Broadcast — -23 LUFS</option>
-            </select>
-        </div>
-
-        <div class="control-group">
-            <label>Reference Track (optional)</label>
-            <button class="ref-upload-btn" id="refUploadBtn" type="button">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                    <polyline points="17 8 12 3 7 8"></polyline>
-                    <line x1="12" y1="3" x2="12" y2="15"></line>
-                </svg>
-                <span class="ref-text" id="refText">Choose reference…</span>
-            </button>
-            <input type="file" id="refInput" accept=".wav,.mp3,.m4a,.flac,.ogg" hidden>
-        </div>
-    </div>
-
-    <!-- Submit -->
-    <button class="submit-btn" id="submitBtn" disabled>
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <polygon points="5 3 19 12 5 21 5 3"></polygon>
-        </svg>
-        Optimize Audio
-    </button>
-
-    <!-- Status Panel -->
-    <div class="status-panel" id="statusPanel">
-        <div class="status-header">
-            <div class="status-icon processing" id="statusIcon">
-                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M21 12a9 9 0 11-6.2-8.56"></path>
-                </svg>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <div class="logo-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                        stroke-linecap="round">
+                        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                        <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                    </svg>
+                </div>
+                <span class="logo-text">Audio Optimizer</span>
             </div>
-            <div class="status-text">
-                <h3 id="statusTitle">Processing…</h3>
-                <p id="statusSubtitle">This may take a few minutes</p>
+            <h1>Optimize any audio in<br>one click</h1>
+            <p class="subtitle">
+                Isolate vocals, remove noise, master against a reference, and hit broadcast-ready loudness. Get a 24-bit
+                WAV, ready for any editor.
+            </p>
+        </header>
+
+        <!-- Pipeline Steps -->
+        <div class="pipeline" id="pipelineVisual">
+            <div class="stage-pill" data-stage="1"><span class="num">1</span> Isolate</div>
+            <span class="pipe-arrow">→</span>
+            <div class="stage-pill" data-stage="2"><span class="num">2</span> Enhance</div>
+            <span class="pipe-arrow">→</span>
+            <div class="stage-pill" data-stage="3"><span class="num">3</span> Master</div>
+            <span class="pipe-arrow">→</span>
+            <div class="stage-pill" data-stage="4"><span class="num">4</span> Normalize</div>
+        </div>
+
+        <!-- Main Card -->
+        <div class="card">
+            <!-- Upload Zone -->
+            <div class="upload-zone" id="uploadZone">
+                <div class="upload-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="17 8 12 3 7 8"></polyline>
+                        <line x1="12" y1="3" x2="12" y2="15"></line>
+                    </svg>
+                </div>
+                <h3 id="uploadTitle">Drop your audio file here</h3>
+                <p id="uploadHint">or click to browse — WAV, MP3, M4A, FLAC, OGG</p>
+
+                <div class="file-info" id="fileInfo">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 18V5l12-2v13"></path>
+                        <circle cx="6" cy="18" r="3"></circle>
+                        <circle cx="18" cy="16" r="3"></circle>
+                    </svg>
+                    <span class="name" id="fileName"></span>
+                    <span class="size" id="fileSize"></span>
+                    <button class="remove" id="removeFile" title="Remove">&times;</button>
+                </div>
+
+                <input type="file" id="audioInput" accept=".wav,.mp3,.m4a,.flac,.ogg,.aac,.wma" hidden>
             </div>
-        </div>
-        <div class="progress-bar-outer">
-            <div class="progress-bar-inner indeterminate" id="progressBar"></div>
-        </div>
 
-        <div class="error-message" id="errorMessage"></div>
+            <!-- Controls -->
+            <div class="controls">
+                <div class="control-group">
+                    <label for="platformSelect">Platform</label>
+                    <select id="platformSelect">
+                        <option value="youtube">YouTube · -14 LUFS</option>
+                        <option value="podcast">Podcast · -16 LUFS</option>
+                        <option value="reels">Reels / Shorts · -14 LUFS</option>
+                        <option value="broadcast">Broadcast · -23 LUFS</option>
+                    </select>
+                </div>
 
-        <div class="download-area" id="downloadArea">
-            <button class="download-btn" id="downloadBtn">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                    <polyline points="7 10 12 15 17 10"></polyline>
-                    <line x1="12" y1="15" x2="12" y2="3"></line>
-                </svg>
-                Download Optimized Audio
-            </button>
-        </div>
-    </div>
+                <div class="control-group">
+                    <label>Reference (optional)</label>
+                    <button class="ref-btn" id="refUploadBtn" type="button">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M9 18V5l12-2v13"></path>
+                            <circle cx="6" cy="18" r="3"></circle>
+                            <circle cx="18" cy="16" r="3"></circle>
+                        </svg>
+                        <span class="ref-text" id="refText">Choose track…</span>
+                    </button>
+                    <input type="file" id="refInput" accept=".wav,.mp3,.m4a,.flac,.ogg" hidden>
+                </div>
+            </div>
 
-    <footer class="footer">
-        Powered by <a href="https://github.com/facebookresearch/demucs" target="_blank">Demucs</a> ·
-        <a href="https://github.com/resemble-ai/resemble-enhance" target="_blank">Resemble Enhance</a> ·
-        <a href="https://github.com/sergree/matchering" target="_blank">Matchering</a> ·
-        <a href="https://ffmpeg.org" target="_blank">FFmpeg</a>
-    </footer>
-</div>
-
-<script>
-    const uploadZone = document.getElementById('uploadZone');
-    const audioInput = document.getElementById('audioInput');
-    const fileInfo = document.getElementById('fileInfo');
-    const fileName = document.getElementById('fileName');
-    const fileSize = document.getElementById('fileSize');
-    const removeBtn = document.getElementById('removeFile');
-    const uploadTitle = document.getElementById('uploadTitle');
-    const uploadHint = document.getElementById('uploadHint');
-    const refUploadBtn = document.getElementById('refUploadBtn');
-    const refInput = document.getElementById('refInput');
-    const refText = document.getElementById('refText');
-    const platformSelect = document.getElementById('platformSelect');
-    const submitBtn = document.getElementById('submitBtn');
-    const statusPanel = document.getElementById('statusPanel');
-    const statusIcon = document.getElementById('statusIcon');
-    const statusTitle = document.getElementById('statusTitle');
-    const statusSubtitle = document.getElementById('statusSubtitle');
-    const progressBar = document.getElementById('progressBar');
-    const errorMessage = document.getElementById('errorMessage');
-    const downloadArea = document.getElementById('downloadArea');
-    const downloadBtn = document.getElementById('downloadBtn');
-    const pipelineVisual = document.getElementById('pipelineVisual');
-
-    let selectedFile = null;
-    let referenceFile = null;
-    let downloadBlob = null;
-
-    // ---- Drag & drop ----
-    uploadZone.addEventListener('click', () => audioInput.click());
-
-    uploadZone.addEventListener('dragover', (e) => {
-        e.preventDefault();
-        uploadZone.classList.add('drag-over');
-    });
-
-    uploadZone.addEventListener('dragleave', () => {
-        uploadZone.classList.remove('drag-over');
-    });
-
-    uploadZone.addEventListener('drop', (e) => {
-        e.preventDefault();
-        uploadZone.classList.remove('drag-over');
-        if (e.dataTransfer.files.length) setFile(e.dataTransfer.files[0]);
-    });
-
-    audioInput.addEventListener('change', () => {
-        if (audioInput.files.length) setFile(audioInput.files[0]);
-    });
-
-    // ---- File selection ----
-    function setFile(file) {
-        selectedFile = file;
-        fileName.textContent = file.name;
-        fileSize.textContent = formatSize(file.size);
-        fileInfo.classList.add('visible');
-        uploadZone.classList.add('has-file');
-        uploadTitle.textContent = 'File ready';
-        uploadHint.textContent = 'Click to change file';
-        submitBtn.disabled = false;
-    }
-
-    removeBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        selectedFile = null;
-        audioInput.value = '';
-        fileInfo.classList.remove('visible');
-        uploadZone.classList.remove('has-file');
-        uploadTitle.textContent = 'Drop your audio file here';
-        uploadHint.textContent = 'or click to browse — WAV, MP3, M4A, FLAC, OGG supported';
-        submitBtn.disabled = true;
-    });
-
-    // ---- Reference upload ----
-    refUploadBtn.addEventListener('click', () => refInput.click());
-    refInput.addEventListener('change', () => {
-        if (refInput.files.length) {
-            referenceFile = refInput.files[0];
-            refText.textContent = referenceFile.name;
-            refUploadBtn.classList.add('has-file');
-        }
-    });
-
-    // ---- Helpers ----
-    function formatSize(bytes) {
-        if (bytes < 1024) return bytes + ' B';
-        if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
-        return (bytes / 1048576).toFixed(1) + ' MB';
-    }
-
-    function resetPipeline() {
-        document.querySelectorAll('.pipe-step').forEach(s => {
-            s.classList.remove('active', 'completed');
-        });
-    }
-
-    function simulateStages() {
-        // Since the API processes all stages server-side, we simulate visual stage progression
-        const steps = document.querySelectorAll('.pipe-step');
-        const durations = [0, 4000, 10000, 18000]; // approximate stage start times
-
-        steps.forEach((step, i) => {
-            setTimeout(() => {
-                steps.forEach((s, j) => {
-                    if (j < i) { s.classList.remove('active'); s.classList.add('completed'); }
-                    else if (j === i) { s.classList.add('active'); s.classList.remove('completed'); }
-                });
-            }, durations[i]);
-        });
-    }
-
-    // ---- Submit ----
-    submitBtn.addEventListener('click', async () => {
-        if (!selectedFile) return;
-
-        // Reset UI
-        submitBtn.disabled = true;
-        submitBtn.innerHTML = '<div class="spinner"></div> Processing…';
-        statusPanel.classList.add('visible');
-        statusIcon.className = 'status-icon processing';
-        statusIcon.innerHTML = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 11-6.2-8.56"></path></svg>';
-        statusTitle.textContent = 'Processing your audio…';
-        statusSubtitle.textContent = 'Running 4-stage pipeline — this may take a few minutes';
-        progressBar.className = 'progress-bar-inner indeterminate';
-        errorMessage.classList.remove('visible');
-        downloadArea.classList.remove('visible');
-
-        resetPipeline();
-        simulateStages();
-
-        // Build form data
-        const formData = new FormData();
-        formData.append('file', selectedFile);
-        if (referenceFile) formData.append('reference', referenceFile);
-
-        try {
-            const response = await fetch(`/optimize?platform=${platformSelect.value}`, {
-                method: 'POST',
-                body: formData,
-            });
-
-            if (!response.ok) {
-                const err = await response.json().catch(() => ({ error: 'Unknown error' }));
-                throw new Error(err.error || `Server error: ${response.status}`);
-            }
-
-            downloadBlob = await response.blob();
-
-            // Success state
-            document.querySelectorAll('.pipe-step').forEach(s => {
-                s.classList.remove('active');
-                s.classList.add('completed');
-            });
-
-            statusIcon.className = 'status-icon done';
-            statusIcon.innerHTML = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>';
-            statusTitle.textContent = 'Optimization complete!';
-            statusSubtitle.textContent = '24-bit WAV ready for download';
-            progressBar.className = 'progress-bar-inner complete';
-            downloadArea.classList.add('visible');
-
-        } catch (err) {
-            resetPipeline();
-            statusIcon.className = 'status-icon error-icon';
-            statusIcon.innerHTML = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>';
-            statusTitle.textContent = 'Something went wrong';
-            statusSubtitle.textContent = 'Check the error below';
-            progressBar.className = 'progress-bar-inner error';
-            progressBar.style.width = '100%';
-            errorMessage.textContent = err.message;
-            errorMessage.classList.add('visible');
-
-        } finally {
-            submitBtn.disabled = false;
-            submitBtn.innerHTML = `
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <!-- Submit -->
+            <button class="submit-btn" id="submitBtn" disabled>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round">
                     <polygon points="5 3 19 12 5 21 5 3"></polygon>
                 </svg>
-                Optimize Audio
-            `;
-        }
-    });
+                Start Optimizing
+            </button>
 
-    // ---- Download ----
-    downloadBtn.addEventListener('click', () => {
-        if (!downloadBlob) return;
-        const url = URL.createObjectURL(downloadBlob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `optimized_${platformSelect.value}.wav`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-    });
-</script>
+            <!-- Status -->
+            <div class="status-panel" id="statusPanel">
+                <div class="status-header">
+                    <div class="status-icon processing" id="statusIcon">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor"
+                            stroke-width="2.5">
+                            <path d="M21 12a9 9 0 11-6.2-8.56"></path>
+                        </svg>
+                    </div>
+                    <div class="status-text">
+                        <h3 id="statusTitle">Processing…</h3>
+                        <p id="statusSubtitle">Running the 4-stage pipeline</p>
+                    </div>
+                </div>
+                <div class="progress-outer">
+                    <div class="progress-inner indeterminate" id="progressBar"></div>
+                </div>
+
+                <div class="error-msg" id="errorMessage"></div>
+
+                <div class="download-area" id="downloadArea">
+                    <button class="download-btn" id="downloadBtn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="7 10 12 15 17 10"></polyline>
+                            <line x1="12" y1="15" x2="12" y2="3"></line>
+                        </svg>
+                        Download Optimized Audio
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <footer class="footer">
+            Built with
+            <a href="https://github.com/facebookresearch/demucs" target="_blank">Demucs</a> ·
+            <a href="https://github.com/resemble-ai/resemble-enhance" target="_blank">Resemble Enhance</a> ·
+            <a href="https://github.com/sergree/matchering" target="_blank">Matchering</a> ·
+            <a href="https://ffmpeg.org" target="_blank">FFmpeg</a>
+        </footer>
+    </div>
+
+    <script>
+        const uploadZone = document.getElementById('uploadZone');
+        const audioInput = document.getElementById('audioInput');
+        const fileInfo = document.getElementById('fileInfo');
+        const fileName = document.getElementById('fileName');
+        const fileSize = document.getElementById('fileSize');
+        const removeBtn = document.getElementById('removeFile');
+        const uploadTitle = document.getElementById('uploadTitle');
+        const uploadHint = document.getElementById('uploadHint');
+        const refUploadBtn = document.getElementById('refUploadBtn');
+        const refInput = document.getElementById('refInput');
+        const refText = document.getElementById('refText');
+        const platformSelect = document.getElementById('platformSelect');
+        const submitBtn = document.getElementById('submitBtn');
+        const statusPanel = document.getElementById('statusPanel');
+        const statusIcon = document.getElementById('statusIcon');
+        const statusTitle = document.getElementById('statusTitle');
+        const statusSubtitle = document.getElementById('statusSubtitle');
+        const progressBar = document.getElementById('progressBar');
+        const errorMessage = document.getElementById('errorMessage');
+        const downloadArea = document.getElementById('downloadArea');
+        const downloadBtn = document.getElementById('downloadBtn');
+
+        let selectedFile = null;
+        let referenceFile = null;
+        let downloadBlob = null;
+
+        // Drag & drop
+        uploadZone.addEventListener('click', () => audioInput.click());
+        uploadZone.addEventListener('dragover', (e) => { e.preventDefault(); uploadZone.classList.add('drag-over'); });
+        uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('drag-over'));
+        uploadZone.addEventListener('drop', (e) => { e.preventDefault(); uploadZone.classList.remove('drag-over'); if (e.dataTransfer.files.length) setFile(e.dataTransfer.files[0]); });
+        audioInput.addEventListener('change', () => { if (audioInput.files.length) setFile(audioInput.files[0]); });
+
+        function setFile(file) {
+            selectedFile = file;
+            fileName.textContent = file.name;
+            fileSize.textContent = formatSize(file.size);
+            fileInfo.classList.add('visible');
+            uploadZone.classList.add('has-file');
+            uploadTitle.textContent = 'File ready';
+            uploadHint.textContent = 'Click to change';
+            submitBtn.disabled = false;
+        }
+
+        removeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            selectedFile = null;
+            audioInput.value = '';
+            fileInfo.classList.remove('visible');
+            uploadZone.classList.remove('has-file');
+            uploadTitle.textContent = 'Drop your audio file here';
+            uploadHint.textContent = 'or click to browse — WAV, MP3, M4A, FLAC, OGG';
+            submitBtn.disabled = true;
+        });
+
+        // Reference
+        refUploadBtn.addEventListener('click', () => refInput.click());
+        refInput.addEventListener('change', () => {
+            if (refInput.files.length) {
+                referenceFile = refInput.files[0];
+                refText.textContent = referenceFile.name;
+                refUploadBtn.classList.add('has-file');
+            }
+        });
+
+        function formatSize(bytes) {
+            if (bytes < 1024) return bytes + ' B';
+            if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
+            return (bytes / 1048576).toFixed(1) + ' MB';
+        }
+
+        function resetPipeline() {
+            document.querySelectorAll('.stage-pill').forEach(s => s.classList.remove('active', 'completed'));
+        }
+
+        function simulateStages() {
+            const steps = document.querySelectorAll('.stage-pill');
+            const durations = [0, 4000, 10000, 18000];
+            steps.forEach((step, i) => {
+                setTimeout(() => {
+                    steps.forEach((s, j) => {
+                        if (j < i) { s.classList.remove('active'); s.classList.add('completed'); }
+                        else if (j === i) { s.classList.add('active'); s.classList.remove('completed'); }
+                    });
+                }, durations[i]);
+            });
+        }
+
+        // Submit
+        submitBtn.addEventListener('click', async () => {
+            if (!selectedFile) return;
+
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<div class="spinner"></div> Processing…';
+            statusPanel.classList.add('visible');
+            statusIcon.className = 'status-icon processing';
+            statusIcon.innerHTML = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 12a9 9 0 11-6.2-8.56"></path></svg>';
+            statusTitle.textContent = 'Processing your audio…';
+            statusSubtitle.textContent = 'Running 4-stage pipeline — this may take a few minutes';
+            progressBar.className = 'progress-inner indeterminate';
+            errorMessage.classList.remove('visible');
+            downloadArea.classList.remove('visible');
+            resetPipeline();
+            simulateStages();
+
+            const formData = new FormData();
+            formData.append('file', selectedFile);
+            if (referenceFile) formData.append('reference', referenceFile);
+
+            try {
+                const response = await fetch(`/optimize?platform=${platformSelect.value}`, {
+                    method: 'POST',
+                    body: formData,
+                });
+
+                if (!response.ok) {
+                    const err = await response.json().catch(() => ({ error: 'Unknown error' }));
+                    throw new Error(err.error || `Server error: ${response.status}`);
+                }
+
+                downloadBlob = await response.blob();
+
+                document.querySelectorAll('.stage-pill').forEach(s => { s.classList.remove('active'); s.classList.add('completed'); });
+                statusIcon.className = 'status-icon done';
+                statusIcon.innerHTML = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>';
+                statusTitle.textContent = 'Optimization complete!';
+                statusSubtitle.textContent = '24-bit WAV ready for download';
+                progressBar.className = 'progress-inner complete';
+                downloadArea.classList.add('visible');
+
+            } catch (err) {
+                resetPipeline();
+                statusIcon.className = 'status-icon error-state';
+                statusIcon.innerHTML = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>';
+                statusTitle.textContent = 'Something went wrong';
+                statusSubtitle.textContent = '';
+                progressBar.className = 'progress-inner error';
+                progressBar.style.width = '100%';
+                errorMessage.textContent = err.message;
+                errorMessage.classList.add('visible');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg> Start Optimizing';
+            }
+        });
+
+        // Download
+        downloadBtn.addEventListener('click', () => {
+            if (!downloadBlob) return;
+            const url = URL.createObjectURL(downloadBlob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `optimized_${platformSelect.value}.wav`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        });
+    </script>
 
 </body>
+
 </html>
