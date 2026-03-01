@@ -36,7 +36,17 @@ else
 fi
 echo "✅ Dependencies installed"
 
-# 5. Start the server
+# 5. Build frontend if present
+if [ -d "frontend" ]; then
+    echo "🏗️  Building React frontend..."
+    cd frontend
+    npm install --silent
+    npm run build --silent
+    cd ..
+    echo "✅ Frontend built to static/"
+fi
+
+# 6. Start the server
 echo ""
 echo "🚀 Starting Audio Optimizer on http://localhost:8000"
 echo "   Open that URL in your browser to use the UI."
