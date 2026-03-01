@@ -1,0 +1,8 @@
+fastapi
+uvicorn[standard]
+python-multipart
+demucs
+resemble-enhance @ git+https://github.com/resemble-ai/resemble-enhance.git
+matchering
+torch
+torchaudio
