@@ -1,0 +1,111 @@
+.upload-zone {
+    border: 2px dashed var(--border);
+    border-radius: var(--radius-lg);
+    padding: 40px 24px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background: var(--bg-hover);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.upload-zone:hover {
+    border-color: var(--accent);
+    background: var(--accent-subtle);
+}
+
+.upload-zone.drag-over {
+    border-color: var(--accent);
+    background: var(--accent-subtle);
+    transform: scale(1.005);
+}
+
+.upload-zone.has-file {
+    border-color: var(--success);
+    border-style: solid;
+    background: var(--success-bg);
+}
+
+.upload-zone.locked {
+    pointer-events: none;
+    opacity: 0.5;
+}
+
+.upload-zone__icon {
+    width: 48px;
+    height: 48px;
+    margin-bottom: 12px;
+    border-radius: 50%;
+    background: var(--bg-card);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border);
+    color: var(--accent);
+}
+
+.upload-zone.has-file .upload-zone__icon {
+    border-color: var(--success-border);
+    color: var(--success);
+}
+
+.upload-zone__title {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 4px;
+    color: var(--text-primary);
+}
+
+.upload-zone__hint {
+    font-size: 13px;
+    color: var(--text-secondary);
+}
+
+.upload-zone__file {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: var(--bg-card);
+    border: 1px solid var(--success-border);
+    border-radius: var(--radius-sm);
+    margin-top: 12px;
+    text-align: left;
+    font-size: 13px;
+}
+
+.upload-zone__name {
+    font-weight: 500;
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--text-primary);
+}
+
+.upload-zone__size {
+    color: var(--text-muted);
+    font-size: 12px;
+}
+
+.upload-zone__remove {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    transition: 0.15s;
+}
+
+.upload-zone__remove:hover {
+    background: var(--error-bg);
+    color: var(--error);
+}
