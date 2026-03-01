@@ -4,9 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Audio Optimizer — AI-Powered Audio Pipeline</title>
+    <title>Audio Optimizer Studio</title>
     <meta name="description"
-        content="AI-powered audio optimization: vocal isolation, denoising, mastering, and LUFS normalization.">
+        content="AI-powered audio optimization studio with stage controls, EQ, compression, reverb, and wind removal.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
         rel="stylesheet">
@@ -16,45 +16,38 @@
         *::after {
             box-sizing: border-box;
             margin: 0;
-            padding: 0;
+            padding: 0
         }
 
         :root {
             --bg: #faf9f7;
-            --bg-card: #ffffff;
-            --bg-subtle: #f5f4f1;
-            --bg-hover: #f0efec;
+            --card: #fff;
+            --subtle: #f5f4f1;
+            --hover: #f0efec;
             --border: #e8e6e1;
-            --border-hover: #d4d1cb;
+            --border-h: #d4d1cb;
             --text: #1a1a1a;
-            --text-secondary: #6b6b6b;
-            --text-muted: #a3a3a3;
+            --text2: #6b6b6b;
+            --muted: #a3a3a3;
             --accent: #6c47ff;
-            --accent-hover: #5835e0;
-            --accent-light: #ece8ff;
-            --accent-glow: rgba(108, 71, 255, 0.10);
-            --success: #10b981;
-            --success-bg: #ecfdf5;
-            --success-border: #a7f3d0;
-            --error: #ef4444;
-            --error-bg: #fef2f2;
-            --error-border: #fecaca;
-            --warn: #f59e0b;
-            --warn-bg: #fffbeb;
+            --accent-h: #5835e0;
+            --accent-l: #ece8ff;
+            --accent-g: rgba(108, 71, 255, .1);
+            --ok: #10b981;
+            --ok-bg: #ecfdf5;
+            --ok-bd: #a7f3d0;
+            --err: #ef4444;
+            --err-bg: #fef2f2;
+            --err-bd: #fecaca;
             --s1: #7c5cfc;
-            --s1-bg: #f0ecff;
             --s2: #0891b2;
-            --s2-bg: #ecfeff;
             --s3: #d97706;
-            --s3-bg: #fffbeb;
             --s4: #059669;
-            --s4-bg: #ecfdf5;
-            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04);
-            --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.06);
-            --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.08);
-            --radius: 12px;
-            --radius-lg: 16px;
-            --radius-xl: 20px;
+            --s5: #8b5cf6;
+            --shadow: 0 4px 16px rgba(0, 0, 0, .06);
+            --r: 12px;
+            --rl: 16px;
+            --rx: 20px;
         }
 
         body {
@@ -62,7 +55,7 @@
             background: var(--bg);
             color: var(--text);
             min-height: 100vh;
-            -webkit-font-smoothing: antialiased;
+            -webkit-font-smoothing: antialiased
         }
 
         .bg-glow {
@@ -70,24 +63,21 @@
             inset: 0;
             pointer-events: none;
             z-index: 0;
-            background:
-                radial-gradient(ellipse at 15% 0%, rgba(108, 71, 255, 0.06) 0%, transparent 55%),
-                radial-gradient(ellipse at 85% 0%, rgba(251, 191, 36, 0.04) 0%, transparent 45%),
-                radial-gradient(ellipse at 50% 100%, rgba(16, 185, 129, 0.04) 0%, transparent 50%);
+            background: radial-gradient(ellipse at 15% 0%, rgba(108, 71, 255, .06) 0%, transparent 55%), radial-gradient(ellipse at 85% 0%, rgba(251, 191, 36, .04) 0%, transparent 45%), radial-gradient(ellipse at 50% 100%, rgba(16, 185, 129, .04) 0%, transparent 50%)
         }
 
         .app {
             position: relative;
             z-index: 1;
-            max-width: 720px;
+            max-width: 760px;
             margin: 0 auto;
-            padding: 40px 20px 80px;
+            padding: 36px 20px 80px
         }
 
-        /* ─── HEADER ─── */
+        /* HEADER */
         .header {
             text-align: center;
-            margin-bottom: 36px;
+            margin-bottom: 32px
         }
 
         .badge {
@@ -96,11 +86,11 @@
             gap: 6px;
             padding: 5px 12px 5px 6px;
             border-radius: 999px;
-            background: var(--accent-light);
+            background: var(--accent-l);
             color: var(--accent);
             font-size: 12px;
             font-weight: 600;
-            margin-bottom: 20px;
+            margin-bottom: 16px
         }
 
         .badge-dot {
@@ -108,57 +98,57 @@
             height: 7px;
             border-radius: 50%;
             background: var(--accent);
-            animation: pulse-dot 2s ease infinite;
+            animation: pd 2s ease infinite
         }
 
-        @keyframes pulse-dot {
+        @keyframes pd {
 
             0%,
             100% {
-                opacity: 1;
+                opacity: 1
             }
 
             50% {
-                opacity: 0.4;
+                opacity: .4
             }
         }
 
         h1 {
-            font-size: 36px;
+            font-size: 32px;
             font-weight: 800;
-            letter-spacing: -1px;
-            line-height: 1.12;
-            margin-bottom: 12px;
+            letter-spacing: -.8px;
+            line-height: 1.15;
+            margin-bottom: 10px
         }
 
         .subtitle {
-            font-size: 15px;
-            color: var(--text-secondary);
+            font-size: 14px;
+            color: var(--text2);
             line-height: 1.6;
-            max-width: 500px;
-            margin: 0 auto;
+            max-width: 520px;
+            margin: 0 auto
         }
 
-        /* ─── STAGE CARDS ─── */
+        /* STAGE CARDS */
         .stages {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 10px;
-            margin-bottom: 28px;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+            margin-bottom: 24px
         }
 
-        .stage-card {
-            background: var(--bg-card);
+        .sc {
+            background: var(--card);
             border: 1.5px solid var(--border);
-            border-radius: var(--radius);
-            padding: 14px 12px;
+            border-radius: var(--r);
+            padding: 12px 8px;
             text-align: center;
-            transition: all 0.3s ease;
+            transition: .3s;
             position: relative;
-            overflow: hidden;
+            overflow: hidden
         }
 
-        .stage-card::after {
+        .sc::after {
             content: '';
             position: absolute;
             bottom: 0;
@@ -166,126 +156,116 @@
             right: 0;
             height: 3px;
             background: var(--border);
-            transition: background 0.3s, height 0.3s;
+            transition: .3s
         }
 
-        .stage-card .icon {
-            font-size: 20px;
-            margin-bottom: 6px;
+        .sc .icon {
+            font-size: 18px;
+            margin-bottom: 4px
         }
 
-        .stage-card .num {
-            font-size: 10px;
+        .sc .num {
+            font-size: 9.5px;
             font-weight: 700;
-            color: var(--text-muted);
+            color: var(--muted);
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: .5px
         }
 
-        .stage-card .name {
-            font-size: 12.5px;
+        .sc .name {
+            font-size: 11.5px;
             font-weight: 600;
-            margin-top: 2px;
+            margin-top: 2px
         }
 
-        .stage-card .time {
-            font-size: 10.5px;
-            color: var(--text-muted);
-            margin-top: 4px;
+        .sc .time {
+            font-size: 10px;
+            color: var(--muted);
+            margin-top: 3px;
             opacity: 0;
-            transition: opacity 0.3s;
+            transition: .3s
         }
 
-        .stage-card.active {
+        .sc .toggle {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            width: 28px;
+            height: 16px;
+            border-radius: 99px;
+            cursor: pointer;
+            border: none;
+            padding: 0;
+            transition: .2s
+        }
+
+        .sc .toggle {
+            background: var(--ok)
+        }
+
+        .sc .toggle::after {
+            content: '';
+            position: absolute;
+            left: 2px;
+            top: 2px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #fff;
+            transition: .2s
+        }
+
+        .sc .toggle.off {
+            background: var(--border)
+        }
+
+        .sc .toggle.off::after {
+            left: 14px
+        }
+
+        .sc.active {
             border-color: var(--accent);
-            box-shadow: 0 0 0 3px var(--accent-glow);
+            box-shadow: 0 0 0 3px var(--accent-g)
         }
 
-        .stage-card.active::after {
+        .sc.active::after {
             background: var(--accent);
-            height: 3px;
+            height: 3px
         }
 
-        .stage-card.active .name {
-            color: var(--accent);
+        .sc.active .name {
+            color: var(--accent)
         }
 
-        .stage-card.active .icon {
-            animation: bounce-icon 1s ease infinite;
+        .sc.active .icon {
+            animation: bi 1s ease infinite
         }
 
-        .stage-card[data-s="1"].active {
-            border-color: var(--s1);
-            box-shadow: 0 0 0 3px rgba(124, 92, 252, 0.1);
+        .sc.done {
+            border-color: var(--ok-bd);
+            background: var(--ok-bg)
         }
 
-        .stage-card[data-s="1"].active::after {
-            background: var(--s1);
+        .sc.done::after {
+            background: var(--ok);
+            height: 3px
         }
 
-        .stage-card[data-s="1"].active .name {
-            color: var(--s1);
+        .sc.done .name {
+            color: var(--ok)
         }
 
-        .stage-card[data-s="2"].active {
-            border-color: var(--s2);
-            box-shadow: 0 0 0 3px rgba(8, 145, 178, 0.1);
-        }
-
-        .stage-card[data-s="2"].active::after {
-            background: var(--s2);
-        }
-
-        .stage-card[data-s="2"].active .name {
-            color: var(--s2);
-        }
-
-        .stage-card[data-s="3"].active {
-            border-color: var(--s3);
-            box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.1);
-        }
-
-        .stage-card[data-s="3"].active::after {
-            background: var(--s3);
-        }
-
-        .stage-card[data-s="3"].active .name {
-            color: var(--s3);
-        }
-
-        .stage-card[data-s="4"].active {
-            border-color: var(--s4);
-            box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.1);
-        }
-
-        .stage-card[data-s="4"].active::after {
-            background: var(--s4);
-        }
-
-        .stage-card[data-s="4"].active .name {
-            color: var(--s4);
-        }
-
-        .stage-card.done {
-            border-color: var(--success-border);
-            background: var(--success-bg);
-        }
-
-        .stage-card.done::after {
-            background: var(--success);
-            height: 3px;
-        }
-
-        .stage-card.done .name {
-            color: var(--success);
-        }
-
-        .stage-card.done .time {
+        .sc.done .time {
             opacity: 1;
-            color: var(--success);
+            color: var(--ok)
         }
 
-        @keyframes bounce-icon {
+        .sc.disabled .icon,
+        .sc.disabled .name {
+            opacity: .4
+        }
+
+        @keyframes bi {
 
             0%,
             100% {
@@ -297,1083 +277,1127 @@
             }
         }
 
-        /* ─── MAIN CARD ─── */
+        /* CARD */
         .card {
-            background: var(--bg-card);
+            background: var(--card);
             border: 1px solid var(--border);
-            border-radius: var(--radius-xl);
-            padding: 28px;
-            box-shadow: var(--shadow-md);
+            border-radius: var(--rx);
+            padding: 24px;
+            box-shadow: var(--shadow)
         }
 
-        /* ─── UPLOAD ─── */
+        /* UPLOAD */
         .upload {
             border: 2px dashed var(--border);
-            border-radius: var(--radius-lg);
-            padding: 40px 24px;
+            border-radius: var(--rl);
+            padding: 36px 20px;
             text-align: center;
             cursor: pointer;
-            transition: all 0.2s ease;
-            background: var(--bg-subtle);
+            transition: .2s;
+            background: var(--subtle)
         }
 
         .upload:hover {
             border-color: var(--accent);
-            background: var(--accent-light);
+            background: var(--accent-l)
         }
 
         .upload.drag-over {
             border-color: var(--accent);
-            background: var(--accent-light);
-            transform: scale(1.005);
+            background: var(--accent-l);
+            transform: scale(1.005)
         }
 
         .upload.has-file {
-            border-color: var(--success);
+            border-color: var(--ok);
             border-style: solid;
-            background: var(--success-bg);
+            background: var(--ok-bg)
         }
 
         .upload.locked {
             pointer-events: none;
-            opacity: 0.5;
+            opacity: .5
         }
 
-        .upload-icon {
-            width: 48px;
-            height: 48px;
-            margin: 0 auto 12px;
+        .up-icon {
+            width: 44px;
+            height: 44px;
+            margin: 0 auto 10px;
             border-radius: 50%;
-            background: white;
+            background: #fff;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: var(--shadow-sm);
-            border: 1px solid var(--border);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, .04);
+            border: 1px solid var(--border)
         }
 
-        .upload-icon svg {
-            width: 20px;
-            height: 20px;
-            color: var(--accent);
+        .up-icon svg {
+            width: 18px;
+            height: 18px;
+            color: var(--accent)
         }
 
-        .upload.has-file .upload-icon {
-            border-color: var(--success-border);
+        .upload.has-file .up-icon {
+            border-color: var(--ok-bd)
         }
 
-        .upload.has-file .upload-icon svg {
-            color: var(--success);
+        .upload.has-file .up-icon svg {
+            color: var(--ok)
         }
 
         .upload h3 {
-            font-size: 14.5px;
+            font-size: 14px;
             font-weight: 600;
-            margin-bottom: 4px;
+            margin-bottom: 3px
         }
 
         .upload p {
-            font-size: 12.5px;
-            color: var(--text-secondary);
+            font-size: 12px;
+            color: var(--text2)
         }
 
-        .file-tag {
+        .ftag {
             display: none;
             align-items: center;
-            gap: 8px;
-            padding: 8px 12px;
-            background: white;
-            border: 1px solid var(--success-border);
-            border-radius: 10px;
-            margin-top: 12px;
-            text-align: left;
-            font-size: 13px;
+            gap: 6px;
+            padding: 6px 10px;
+            background: #fff;
+            border: 1px solid var(--ok-bd);
+            border-radius: 8px;
+            margin-top: 10px;
+            font-size: 12px
         }
 
-        .file-tag.visible {
-            display: inline-flex;
+        .ftag.vis {
+            display: inline-flex
         }
 
-        .file-tag svg {
-            width: 16px;
-            height: 16px;
-            color: var(--success);
-            flex-shrink: 0;
+        .ftag svg {
+            width: 14px;
+            height: 14px;
+            color: var(--ok);
+            flex-shrink: 0
         }
 
-        .file-tag .fname {
+        .ftag .fn {
             font-weight: 500;
-            max-width: 200px;
+            max-width: 180px;
             overflow: hidden;
             text-overflow: ellipsis;
-            white-space: nowrap;
+            white-space: nowrap
         }
 
-        .file-tag .fsize {
-            color: var(--text-muted);
-            font-size: 12px;
+        .ftag .fs {
+            color: var(--muted);
+            font-size: 11px
         }
 
-        .file-tag .x {
+        .ftag .x {
             background: none;
             border: none;
-            color: var(--text-muted);
+            color: var(--muted);
             cursor: pointer;
-            padding: 0 4px;
-            font-size: 15px;
-            border-radius: 4px;
-            transition: 0.15s;
+            padding: 0 3px;
+            font-size: 14px;
+            border-radius: 4px
         }
 
-        .file-tag .x:hover {
-            background: var(--error-bg);
-            color: var(--error);
+        .ftag .x:hover {
+            background: var(--err-bg);
+            color: var(--err)
         }
 
-        /* ─── CONTROLS ─── */
+        /* CONTROLS ROW */
         .controls {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-top: 18px;
+            gap: 10px;
+            margin-top: 16px
         }
 
         .ctrl {
             display: flex;
             flex-direction: column;
-            gap: 5px;
+            gap: 4px
         }
 
         .ctrl label {
-            font-size: 11.5px;
+            font-size: 11px;
             font-weight: 600;
-            color: var(--text-secondary);
+            color: var(--text2);
             text-transform: uppercase;
-            letter-spacing: 0.4px;
+            letter-spacing: .4px
         }
 
         select,
         .ref-btn {
             appearance: none;
             -webkit-appearance: none;
-            background: var(--bg-subtle);
+            background: var(--subtle);
             border: 1.5px solid var(--border);
             border-radius: 10px;
-            padding: 9px 12px;
-            font-size: 13px;
+            padding: 8px 10px;
+            font-size: 12.5px;
             font-family: inherit;
             font-weight: 500;
             color: var(--text);
             cursor: pointer;
-            transition: 0.15s;
-            width: 100%;
+            transition: .15s;
+            width: 100%
         }
 
         select {
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' fill='%236b6b6b' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10l-5 5z'/%3E%3C/svg%3E");
             background-repeat: no-repeat;
             background-position: right 10px center;
-            padding-right: 28px;
+            padding-right: 26px
         }
 
         select:hover,
         .ref-btn:hover {
-            border-color: var(--border-hover);
-            background: white;
+            border-color: var(--border-h);
+            background: #fff
         }
 
         select:focus {
             outline: none;
             border-color: var(--accent);
-            box-shadow: 0 0 0 3px var(--accent-glow);
+            box-shadow: 0 0 0 3px var(--accent-g)
         }
 
         .ref-btn {
             display: flex;
             align-items: center;
-            gap: 6px;
-            text-align: left;
+            gap: 5px;
+            text-align: left
         }
 
         .ref-btn svg {
-            width: 14px;
-            height: 14px;
-            color: var(--text-muted);
-            flex-shrink: 0;
+            width: 13px;
+            height: 13px;
+            color: var(--muted);
+            flex-shrink: 0
         }
 
         .ref-btn .rt {
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
-            color: var(--text-muted);
-            font-size: 12.5px;
+            color: var(--muted);
+            font-size: 12px
         }
 
         .ref-btn.has-file {
             border-color: var(--accent);
-            background: var(--accent-light);
+            background: var(--accent-l)
         }
 
         .ref-btn.has-file .rt {
             color: var(--accent);
-            font-weight: 600;
+            font-weight: 600
         }
 
-        /* ─── BUTTON ─── */
+        /* EFFECTS PANEL */
+        .fx-panel {
+            margin-top: 16px;
+            border: 1px solid var(--border);
+            border-radius: var(--rl);
+            overflow: hidden
+        }
+
+        .fx-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 16px;
+            background: var(--subtle);
+            cursor: pointer;
+            user-select: none;
+            border-bottom: 1px solid var(--border)
+        }
+
+        .fx-header h3 {
+            font-size: 13px;
+            font-weight: 600;
+            flex: 1
+        }
+
+        .fx-header .arrow {
+            font-size: 12px;
+            color: var(--muted);
+            transition: .2s
+        }
+
+        .fx-header .arrow.open {
+            transform: rotate(180deg)
+        }
+
+        .fx-body {
+            display: none;
+            padding: 16px
+        }
+
+        .fx-body.open {
+            display: block
+        }
+
+        .fx-section {
+            margin-bottom: 16px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border)
+        }
+
+        .fx-section:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none
+        }
+
+        .fx-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 10px
+        }
+
+        .fx-icon {
+            font-size: 16px;
+            width: 28px;
+            text-align: center
+        }
+
+        .fx-label {
+            font-size: 13px;
+            font-weight: 600;
+            flex: 1
+        }
+
+        .fx-toggle {
+            width: 32px;
+            height: 18px;
+            border-radius: 99px;
+            cursor: pointer;
+            border: none;
+            padding: 0;
+            transition: .2s;
+            position: relative;
+            background: var(--border)
+        }
+
+        .fx-toggle.on {
+            background: var(--accent)
+        }
+
+        .fx-toggle::after {
+            content: '';
+            position: absolute;
+            left: 2px;
+            top: 2px;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: #fff;
+            transition: .2s
+        }
+
+        .fx-toggle.on::after {
+            left: 16px
+        }
+
+        .slider-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-top: 8px
+        }
+
+        .sg-full {
+            grid-template-columns: 1fr
+        }
+
+        .slider-item {
+            display: flex;
+            flex-direction: column;
+            gap: 3px
+        }
+
+        .slider-item label {
+            font-size: 10.5px;
+            font-weight: 500;
+            color: var(--text2);
+            display: flex;
+            justify-content: space-between
+        }
+
+        .slider-item label span {
+            color: var(--accent);
+            font-weight: 600;
+            font-variant-numeric: tabular-nums
+        }
+
+        input[type=range] {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 4px;
+            background: var(--border);
+            border-radius: 2px;
+            outline: none;
+            cursor: pointer
+        }
+
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: var(--accent);
+            cursor: pointer;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, .2)
+        }
+
+        input[type=range]:disabled {
+            opacity: .3;
+            cursor: default
+        }
+
+        /* GO BUTTON */
         .go-btn {
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 8px;
             width: 100%;
-            margin-top: 20px;
-            padding: 13px;
-            border-radius: var(--radius);
+            margin-top: 18px;
+            padding: 12px;
+            border-radius: var(--r);
             border: none;
             background: linear-gradient(135deg, #6c47ff, #8b6fff);
-            color: white;
+            color: #fff;
             font-family: inherit;
-            font-size: 14px;
+            font-size: 13.5px;
             font-weight: 600;
             cursor: pointer;
-            transition: 0.2s;
-            box-shadow: 0 2px 8px rgba(108, 71, 255, 0.25);
+            transition: .2s;
+            box-shadow: 0 2px 8px rgba(108, 71, 255, .25)
         }
 
         .go-btn:hover:not(:disabled) {
             transform: translateY(-1px);
-            box-shadow: 0 6px 20px rgba(108, 71, 255, 0.3);
+            box-shadow: 0 6px 20px rgba(108, 71, 255, .3)
         }
 
         .go-btn:disabled {
-            opacity: 0.4;
-            cursor: not-allowed;
+            opacity: .4;
+            cursor: not-allowed
         }
 
         .go-btn svg {
-            width: 16px;
-            height: 16px;
+            width: 15px;
+            height: 15px
         }
 
         .spinner {
-            width: 16px;
-            height: 16px;
-            border: 2.5px solid rgba(255, 255, 255, 0.3);
-            border-top-color: white;
+            width: 15px;
+            height: 15px;
+            border: 2.5px solid rgba(255, 255, 255, .3);
+            border-top-color: #fff;
             border-radius: 50%;
-            animation: spin 0.7s linear infinite;
+            animation: spin .7s linear infinite
         }
 
         @keyframes spin {
             to {
-                transform: rotate(360deg);
+                transform: rotate(360deg)
             }
         }
 
-        /* ─── STATUS ─── */
+        /* STATUS */
         .status {
             display: none;
-            margin-top: 18px;
-            padding: 18px;
-            border-radius: var(--radius-lg);
-            background: var(--bg-subtle);
-            border: 1px solid var(--border);
+            margin-top: 16px;
+            padding: 16px;
+            border-radius: var(--rl);
+            background: var(--subtle);
+            border: 1px solid var(--border)
         }
 
-        .status.visible {
-            display: block;
+        .status.vis {
+            display: block
         }
 
         .status-row {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 10px
         }
 
-        .status-dot {
-            width: 34px;
-            height: 34px;
+        .sdot {
+            width: 32px;
+            height: 32px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            flex-shrink: 0;
+            flex-shrink: 0
         }
 
-        .status-dot.proc {
-            background: var(--accent-light);
+        .sdot.proc {
+            background: var(--accent-l)
         }
 
-        .status-dot.proc svg {
+        .sdot.proc svg {
             color: var(--accent);
-            animation: spin 2s linear infinite;
+            animation: spin 2s linear infinite
         }
 
-        .status-dot.ok {
-            background: var(--success-bg);
+        .sdot.ok {
+            background: var(--ok-bg)
         }
 
-        .status-dot.ok svg {
-            color: var(--success);
+        .sdot.ok svg {
+            color: var(--ok)
         }
 
-        .status-dot.fail {
-            background: var(--error-bg);
+        .sdot.fail {
+            background: var(--err-bg)
         }
 
-        .status-dot.fail svg {
-            color: var(--error);
+        .sdot.fail svg {
+            color: var(--err)
         }
 
-        .status-info h3 {
-            font-size: 13.5px;
-            font-weight: 600;
+        .sinfo h3 {
+            font-size: 13px;
+            font-weight: 600
         }
 
-        .status-info p {
-            font-size: 12px;
-            color: var(--text-secondary);
-            margin-top: 2px;
+        .sinfo p {
+            font-size: 11.5px;
+            color: var(--text2);
+            margin-top: 1px
         }
 
-        .err-box {
-            margin-top: 10px;
-            padding: 10px 12px;
+        .ebox {
+            margin-top: 8px;
+            padding: 8px 10px;
             border-radius: 8px;
-            background: var(--error-bg);
-            border: 1px solid var(--error-border);
-            color: var(--error);
-            font-size: 12.5px;
+            background: var(--err-bg);
+            border: 1px solid var(--err-bd);
+            color: var(--err);
+            font-size: 12px;
             display: none;
-            word-break: break-word;
+            word-break: break-word
         }
 
-        .err-box.visible {
-            display: block;
+        .ebox.vis {
+            display: block
         }
 
-        /* ─── RESULT ─── */
+        /* RESULT */
         .result {
             display: none;
-            margin-top: 18px;
+            margin-top: 16px
         }
 
-        .result.visible {
-            display: block;
+        .result.vis {
+            display: block
         }
 
-        .result-header {
+        .rh {
             display: flex;
             align-items: center;
             gap: 10px;
-            padding: 14px 16px;
-            background: var(--success-bg);
-            border: 1px solid var(--success-border);
-            border-radius: var(--radius) var(--radius) 0 0;
+            padding: 12px 14px;
+            background: var(--ok-bg);
+            border: 1px solid var(--ok-bd);
+            border-radius: var(--r) var(--r) 0 0
         }
 
-        .result-header svg {
-            width: 20px;
-            height: 20px;
-            color: var(--success);
+        .rh svg {
+            width: 18px;
+            height: 18px;
+            color: var(--ok)
         }
 
-        .result-header h3 {
-            font-size: 14px;
+        .rh h3 {
+            font-size: 13.5px;
             font-weight: 600;
-            color: var(--success);
+            color: var(--ok)
         }
 
-        .result-header .stats {
+        .rh .stats {
             margin-left: auto;
-            font-size: 12px;
-            color: var(--text-secondary);
+            font-size: 11.5px;
+            color: var(--text2)
         }
 
-        .player-section {
+        .ps {
             border: 1px solid var(--border);
             border-top: none;
-            border-radius: 0 0 var(--radius) var(--radius);
-            overflow: hidden;
+            border-radius: 0 0 var(--r) var(--r);
+            overflow: hidden
         }
 
-        .player-tab-bar {
+        .ptb {
             display: flex;
-            background: var(--bg-subtle);
-            border-bottom: 1px solid var(--border);
+            background: var(--subtle);
+            border-bottom: 1px solid var(--border)
         }
 
-        .player-tab {
+        .pt {
             flex: 1;
-            padding: 10px;
+            padding: 9px;
             text-align: center;
-            font-size: 12.5px;
+            font-size: 12px;
             font-weight: 600;
             cursor: pointer;
             border: none;
             background: none;
-            color: var(--text-secondary);
-            transition: 0.2s;
-            position: relative;
+            color: var(--text2);
+            transition: .2s;
+            position: relative
         }
 
-        .player-tab.active {
+        .pt.active {
             color: var(--accent);
-            background: white;
+            background: #fff
         }
 
-        .player-tab.active::after {
+        .pt.active::after {
             content: '';
             position: absolute;
             bottom: -1px;
             left: 0;
             right: 0;
             height: 2px;
-            background: var(--accent);
+            background: var(--accent)
         }
 
-        .player-body {
-            padding: 16px;
-            background: white;
+        .pb {
+            padding: 14px;
+            background: #fff
         }
 
-        .waveform-container {
-            height: 64px;
-            background: var(--bg-subtle);
+        .wc {
+            height: 56px;
+            background: var(--subtle);
             border-radius: 8px;
             overflow: hidden;
-            margin-bottom: 12px;
-            position: relative;
+            margin-bottom: 10px;
+            position: relative
         }
 
-        .waveform-canvas {
+        .wc canvas {
             width: 100%;
             height: 100%;
-            display: block;
+            display: block
         }
 
-        .waveform-overlay {
+        .wo {
             position: absolute;
             inset: 0;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 11px;
-            color: var(--text-muted);
+            color: var(--muted)
         }
 
-        .audio-controls {
+        .ac {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px
         }
 
         .play-btn {
-            width: 36px;
-            height: 36px;
+            width: 32px;
+            height: 32px;
             border-radius: 50%;
             border: none;
             background: var(--accent);
-            color: white;
+            color: #fff;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            transition: 0.15s;
-            flex-shrink: 0;
+            transition: .15s;
+            flex-shrink: 0
         }
 
         .play-btn:hover {
-            background: var(--accent-hover);
-            transform: scale(1.05);
+            background: var(--accent-h);
+            transform: scale(1.05)
         }
 
         .play-btn svg {
-            width: 14px;
-            height: 14px;
+            width: 13px;
+            height: 13px
         }
 
-        .play-btn.playing {
-            background: var(--accent-hover);
-        }
-
-        .time-display {
-            font-size: 11.5px;
-            color: var(--text-muted);
+        .td {
+            font-size: 11px;
+            color: var(--muted);
             font-variant-numeric: tabular-nums;
-            min-width: 70px;
+            min-width: 65px
         }
 
-        .seek-bar {
+        .seek {
             flex: 1;
             -webkit-appearance: none;
+            appearance: none;
             height: 4px;
             background: var(--border);
             border-radius: 2px;
             outline: none;
-            cursor: pointer;
+            cursor: pointer
         }
 
-        .seek-bar::-webkit-slider-thumb {
+        .seek::-webkit-slider-thumb {
             -webkit-appearance: none;
             width: 12px;
             height: 12px;
             border-radius: 50%;
             background: var(--accent);
-            cursor: pointer;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+            cursor: pointer
         }
 
         .dl-btn {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 7px;
+            gap: 6px;
             width: 100%;
-            padding: 11px;
-            margin-top: 14px;
+            padding: 10px;
+            margin-top: 12px;
             border-radius: 10px;
-            border: 1.5px solid var(--success);
-            background: var(--success-bg);
-            color: var(--success);
+            border: 1.5px solid var(--ok);
+            background: var(--ok-bg);
+            color: var(--ok);
             font-family: inherit;
-            font-size: 13px;
+            font-size: 12.5px;
             font-weight: 600;
             cursor: pointer;
-            transition: 0.15s;
+            transition: .15s
         }
 
         .dl-btn:hover {
             background: #d1fae5;
-            transform: translateY(-1px);
+            transform: translateY(-1px)
         }
 
         .dl-btn svg {
-            width: 16px;
-            height: 16px;
+            width: 15px;
+            height: 15px
         }
 
-        /* ─── FOOTER ─── */
         .footer {
             text-align: center;
-            margin-top: 36px;
-            font-size: 11.5px;
-            color: var(--text-muted);
+            margin-top: 32px;
+            font-size: 11px;
+            color: var(--muted)
         }
 
         .footer a {
-            color: var(--text-secondary);
-            text-decoration: none;
+            color: var(--text2);
+            text-decoration: none
         }
 
         .footer a:hover {
-            color: var(--accent);
+            color: var(--accent)
         }
 
-        /* ─── RESPONSIVE ─── */
-        @media (max-width: 560px) {
+        @media(max-width:600px) {
             .app {
-                padding: 28px 14px 60px;
+                padding: 24px 12px 60px
             }
 
             h1 {
-                font-size: 26px;
+                font-size: 24px
             }
 
             .stages {
-                grid-template-columns: repeat(2, 1fr);
+                grid-template-columns: repeat(3, 1fr)
             }
 
             .controls {
-                grid-template-columns: 1fr;
+                grid-template-columns: 1fr
             }
 
             .card {
-                padding: 20px;
+                padding: 18px
             }
 
-            .stage-card {
-                padding: 10px 8px;
+            .sc {
+                padding: 10px 6px
+            }
+
+            .slider-group {
+                grid-template-columns: 1fr
             }
         }
     </style>
 </head>
 
 <body>
-
     <div class="bg-glow"></div>
     <div class="app">
-
-        <!-- Header -->
         <header class="header">
-            <div class="badge"><span class="badge-dot"></span> AI-Powered Pipeline</div>
-            <h1>Audio Optimizer</h1>
-            <p class="subtitle">Upload any audio file. We'll isolate vocals, remove noise, master it, and normalize
-                loudness — all automatically.</p>
+            <div class="badge"><span class="badge-dot"></span>AI-Powered Studio</div>
+            <h1>Audio Optimizer Studio</h1>
+            <p class="subtitle">Upload audio, toggle processing stages, fine-tune effects, and export broadcast-ready
+                files.</p>
         </header>
 
         <!-- Stage Cards -->
         <div class="stages" id="stages">
-            <div class="stage-card" data-s="1">
+            <div class="sc" data-s="1" data-key="isolate"><button class="toggle" id="tog1"
+                    title="Toggle stage"></button>
                 <div class="icon">🎤</div>
                 <div class="num">Stage 1</div>
                 <div class="name">Isolate</div>
                 <div class="time" id="t1"></div>
             </div>
-            <div class="stage-card" data-s="2">
+            <div class="sc" data-s="2" data-key="denoise"><button class="toggle" id="tog2"
+                    title="Toggle stage"></button>
                 <div class="icon">✨</div>
                 <div class="num">Stage 2</div>
                 <div class="name">Denoise</div>
                 <div class="time" id="t2"></div>
             </div>
-            <div class="stage-card" data-s="3">
+            <div class="sc" data-s="3" data-key="master"><button class="toggle" id="tog3" title="Toggle stage"></button>
                 <div class="icon">🎛️</div>
                 <div class="num">Stage 3</div>
                 <div class="name">Master</div>
                 <div class="time" id="t3"></div>
             </div>
-            <div class="stage-card" data-s="4">
+            <div class="sc" data-s="4" data-key="normalize"><button class="toggle" id="tog4"
+                    title="Toggle stage"></button>
                 <div class="icon">📊</div>
                 <div class="num">Stage 4</div>
                 <div class="name">Normalize</div>
                 <div class="time" id="t4"></div>
             </div>
+            <div class="sc" data-s="5" data-key="effects">
+                <div class="icon">🎚️</div>
+                <div class="num">Stage 5</div>
+                <div class="name">Effects</div>
+                <div class="time" id="t5"></div>
+            </div>
         </div>
 
-        <!-- Main Card -->
         <div class="card">
             <!-- Upload -->
             <div class="upload" id="uploadZone">
-                <div class="upload-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                        stroke-linejoin="round">
+                <div class="up-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round">
                         <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
                         <polyline points="17 8 12 3 7 8"></polyline>
                         <line x1="12" y1="3" x2="12" y2="15"></line>
-                    </svg>
-                </div>
-                <h3 id="upTitle">Drop your audio file here</h3>
-                <p id="upHint">WAV · MP3 · M4A · FLAC · OGG · AAC</p>
-                <div class="file-tag" id="fileTag">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    </svg></div>
+                <h3 id="upT">Drop your audio file here</h3>
+                <p id="upH">WAV · MP3 · M4A · FLAC · OGG · AAC</p>
+                <div class="ftag" id="ftag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M9 18V5l12-2v13"></path>
                         <circle cx="6" cy="18" r="3"></circle>
                         <circle cx="18" cy="16" r="3"></circle>
-                    </svg>
-                    <span class="fname" id="fName"></span>
-                    <span class="fsize" id="fSize"></span>
-                    <button class="x" id="removeFile">&times;</button>
-                </div>
-                <input type="file" id="audioInput" accept=".wav,.mp3,.m4a,.flac,.ogg,.aac,.wma" hidden>
+                    </svg><span class="fn" id="fN"></span><span class="fs" id="fS"></span><button class="x"
+                        id="rmFile">&times;</button></div>
+                <input type="file" id="audioIn" accept=".wav,.mp3,.m4a,.flac,.ogg,.aac,.wma" hidden>
             </div>
 
             <!-- Controls -->
             <div class="controls">
-                <div class="ctrl">
-                    <label for="platform">Platform</label>
-                    <select id="platform">
+                <div class="ctrl"><label for="plat">Platform</label>
+                    <select id="plat">
                         <option value="youtube">YouTube · -14 LUFS</option>
                         <option value="podcast">Podcast · -16 LUFS</option>
-                        <option value="reels">Reels / Shorts · -14 LUFS</option>
+                        <option value="reels">Reels/Shorts · -14 LUFS</option>
                         <option value="broadcast">Broadcast · -23 LUFS</option>
                     </select>
                 </div>
-                <div class="ctrl">
-                    <label>Reference (opt.)</label>
-                    <button class="ref-btn" id="refBtn" type="button">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <div class="ctrl"><label>Reference (opt.)</label>
+                    <button class="ref-btn" id="refBtn" type="button"><svg viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2">
                             <path d="M9 18V5l12-2v13"></path>
                             <circle cx="6" cy="18" r="3"></circle>
                             <circle cx="18" cy="16" r="3"></circle>
-                        </svg>
-                        <span class="rt" id="refText">Choose track…</span>
-                    </button>
-                    <input type="file" id="refInput" accept=".wav,.mp3,.m4a,.flac,.ogg" hidden>
+                        </svg><span class="rt" id="refT">Choose track…</span></button>
+                    <input type="file" id="refIn" accept=".wav,.mp3,.m4a,.flac,.ogg" hidden>
                 </div>
             </div>
 
-            <!-- Go -->
-            <button class="go-btn" id="goBtn" disabled>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <polygon points="5 3 19 12 5 21 5 3"></polygon>
-                </svg>
-                Start Optimizing
-            </button>
+            <!-- LUFS Slider -->
+            <div class="slider-group sg-full" style="margin-top:12px">
+                <div class="slider-item"><label>LUFS Target <span id="lufsVal">-14</span></label><input type="range"
+                        id="lufsSlider" min="-24" max="-6" value="-14" step="1"></div>
+            </div>
 
-            <!-- Status -->
-            <div class="status" id="statusPanel">
-                <div class="status-row">
-                    <div class="status-dot proc" id="sDot">
-                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor"
-                            stroke-width="2.5">
-                            <path d="M21 12a9 9 0 11-6.2-8.56"></path>
-                        </svg>
+            <!-- Effects Panel -->
+            <div class="fx-panel">
+                <div class="fx-header" id="fxToggle"><span>🎚️</span>
+                    <h3>Studio Effects</h3><span class="arrow" id="fxArrow">▼</span>
+                </div>
+                <div class="fx-body" id="fxBody">
+                    <!-- Wind Removal -->
+                    <div class="fx-section">
+                        <div class="fx-row"><span class="fx-icon">🌬️</span><span class="fx-label">Wind
+                                Removal</span><button class="fx-toggle" id="fxWind" data-fx="wind"></button></div>
+                        <div class="slider-group sg-full" id="windSliders">
+                            <div class="slider-item"><label>Cutoff <span id="windVal">80 Hz</span></label><input
+                                    type="range" id="windCutoff" min="40" max="200" value="80" step="5" disabled></div>
+                        </div>
                     </div>
-                    <div class="status-info">
-                        <h3 id="sTitle">Processing…</h3>
-                        <p id="sSub">Uploading your file</p>
+                    <!-- EQ -->
+                    <div class="fx-section">
+                        <div class="fx-row"><span class="fx-icon">🎚️</span><span class="fx-label">3-Band
+                                EQ</span><button class="fx-toggle" id="fxEq" data-fx="eq"></button></div>
+                        <div class="slider-group" id="eqSliders">
+                            <div class="slider-item"><label>Low (200Hz) <span id="eqLowVal">0 dB</span></label><input
+                                    type="range" id="eqLow" min="-12" max="12" value="0" step="0.5" disabled></div>
+                            <div class="slider-item"><label>Mid (1kHz) <span id="eqMidVal">0 dB</span></label><input
+                                    type="range" id="eqMid" min="-12" max="12" value="0" step="0.5" disabled></div>
+                            <div class="slider-item"><label>High (4kHz) <span id="eqHighVal">0 dB</span></label><input
+                                    type="range" id="eqHigh" min="-12" max="12" value="0" step="0.5" disabled></div>
+                        </div>
+                    </div>
+                    <!-- Compressor -->
+                    <div class="fx-section">
+                        <div class="fx-row"><span class="fx-icon">🔊</span><span
+                                class="fx-label">Compressor</span><button class="fx-toggle" id="fxComp"
+                                data-fx="comp"></button></div>
+                        <div class="slider-group" id="compSliders">
+                            <div class="slider-item"><label>Threshold <span id="compThVal">-20 dB</span></label><input
+                                    type="range" id="compTh" min="-60" max="0" value="-20" step="1" disabled></div>
+                            <div class="slider-item"><label>Ratio <span id="compRaVal">4:1</span></label><input
+                                    type="range" id="compRa" min="1" max="20" value="4" step="0.5" disabled></div>
+                            <div class="slider-item"><label>Attack <span id="compAtVal">5 ms</span></label><input
+                                    type="range" id="compAt" min="0.1" max="100" value="5" step="0.5" disabled></div>
+                            <div class="slider-item"><label>Release <span id="compReVal">50 ms</span></label><input
+                                    type="range" id="compRe" min="5" max="500" value="50" step="5" disabled></div>
+                        </div>
+                    </div>
+                    <!-- Reverb -->
+                    <div class="fx-section">
+                        <div class="fx-row"><span class="fx-icon">🔉</span><span class="fx-label">Reverb</span><button
+                                class="fx-toggle" id="fxRev" data-fx="rev"></button></div>
+                        <div class="slider-group" id="revSliders">
+                            <div class="slider-item"><label>Room Size <span id="revRoomVal">30%</span></label><input
+                                    type="range" id="revRoom" min="5" max="100" value="30" step="1" disabled></div>
+                            <div class="slider-item"><label>Wet/Dry <span id="revWetVal">20%</span></label><input
+                                    type="range" id="revWet" min="0" max="80" value="20" step="1" disabled></div>
+                        </div>
                     </div>
                 </div>
-                <div class="err-box" id="errBox"></div>
+            </div>
+
+            <!-- Go Button -->
+            <button class="go-btn" id="goBtn" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="2">
+                    <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                </svg>Start Optimizing</button>
+
+            <!-- Status -->
+            <div class="status" id="statusP">
+                <div class="status-row">
+                    <div class="sdot proc" id="sDot"><svg viewBox="0 0 24 24" width="15" height="15" fill="none"
+                            stroke="currentColor" stroke-width="2.5">
+                            <path d="M21 12a9 9 0 11-6.2-8.56"></path>
+                        </svg></div>
+                    <div class="sinfo">
+                        <h3 id="sT">Processing…</h3>
+                        <p id="sS">Uploading</p>
+                    </div>
+                </div>
+                <div class="ebox" id="eBox"></div>
             </div>
 
             <!-- Result -->
-            <div class="result" id="resultPanel">
-                <div class="result-header">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <div class="result" id="resP">
+                <div class="rh"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                         <polyline points="20 6 9 17 4 12"></polyline>
                     </svg>
-                    <h3>Optimization Complete</h3>
-                    <span class="stats" id="totalTime"></span>
+                    <h3>Complete</h3><span class="stats" id="totTime"></span>
                 </div>
-                <div class="player-section">
-                    <div class="player-tab-bar">
-                        <button class="player-tab active" data-target="optimized" id="tabOptimized">🔊
-                            Optimized</button>
-                        <button class="player-tab" data-target="original" id="tabOriginal">📁 Original</button>
-                    </div>
-                    <div class="player-body">
-                        <div class="waveform-container">
-                            <canvas class="waveform-canvas" id="waveCanvas"></canvas>
-                            <div class="waveform-overlay" id="waveOverlay">Audio waveform</div>
+                <div class="ps">
+                    <div class="ptb"><button class="pt active" data-t="opt" id="tabOpt">🔊 Optimized</button><button
+                            class="pt" data-t="orig" id="tabOrig">📁 Original</button></div>
+                    <div class="pb">
+                        <div class="wc"><canvas id="wCan"></canvas>
+                            <div class="wo" id="wO">Waveform</div>
                         </div>
-                        <div class="audio-controls">
-                            <button class="play-btn" id="playBtn">
-                                <svg viewBox="0 0 24 24" fill="currentColor" id="playIcon">
+                        <div class="ac"><button class="play-btn" id="playB"><svg viewBox="0 0 24 24" fill="currentColor"
+                                    id="playI">
                                     <polygon points="5 3 19 12 5 21 5 3"></polygon>
-                                </svg>
-                            </button>
-                            <input type="range" class="seek-bar" id="seekBar" min="0" max="1000" value="0">
-                            <span class="time-display" id="timeDisplay">0:00 / 0:00</span>
-                        </div>
+                                </svg></button><input type="range" class="seek" id="seekB" min="0" max="1000"
+                                value="0"><span class="td" id="tD">0:00 / 0:00</span></div>
                     </div>
                 </div>
-                <button class="dl-btn" id="dlBtn">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                        stroke-linejoin="round">
+                <button class="dl-btn" id="dlBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2" stroke-linecap="round">
                         <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
                         <polyline points="7 10 12 15 17 10"></polyline>
                         <line x1="12" y1="15" x2="12" y2="3"></line>
-                    </svg>
-                    Download Optimized WAV
-                </button>
+                    </svg>Download Optimized WAV</button>
             </div>
         </div>
 
-        <footer class="footer">
-            Powered by
-            <a href="https://github.com/facebookresearch/demucs" target="_blank">Demucs</a> ·
-            <a href="https://github.com/resemble-ai/resemble-enhance" target="_blank">Resemble Enhance</a> ·
-            <a href="https://github.com/sergree/matchering" target="_blank">Matchering</a> ·
-            <a href="https://ffmpeg.org" target="_blank">FFmpeg</a>
-        </footer>
+        <footer class="footer">Powered by <a href="https://github.com/facebookresearch/demucs"
+                target="_blank">Demucs</a> · <a href="https://github.com/resemble-ai/resemble-enhance"
+                target="_blank">Resemble Enhance</a> · <a href="https://github.com/sergree/matchering"
+                target="_blank">Matchering</a> · <a href="https://ffmpeg.org" target="_blank">FFmpeg</a></footer>
     </div>
 
     <script>
         const $ = id => document.getElementById(id);
-        const uploadZone = $('uploadZone'), audioInput = $('audioInput');
-        const fileTag = $('fileTag'), fName = $('fName'), fSize = $('fSize');
-        const upTitle = $('upTitle'), upHint = $('upHint');
-        const refBtn = $('refBtn'), refInput = $('refInput'), refText = $('refText');
-        const platform = $('platform'), goBtn = $('goBtn');
-        const statusPanel = $('statusPanel'), sDot = $('sDot'), sTitle = $('sTitle'), sSub = $('sSub'), errBox = $('errBox');
-        const resultPanel = $('resultPanel'), totalTime = $('totalTime');
-        const playBtn = $('playBtn'), playIcon = $('playIcon'), seekBar = $('seekBar'), timeDisplay = $('timeDisplay');
-        const waveCanvas = $('waveCanvas'), waveOverlay = $('waveOverlay');
-        const dlBtn = $('dlBtn'), tabOptimized = $('tabOptimized'), tabOriginal = $('tabOriginal');
+        const uz = $('uploadZone'), ai = $('audioIn'), ftag = $('ftag'), fN = $('fN'), fS = $('fS'), upT = $('upT'), upH = $('upH');
+        const refBtn = $('refBtn'), refIn = $('refIn'), refT = $('refT'), plat = $('plat'), goBtn = $('goBtn');
+        const statusP = $('statusP'), sDot = $('sDot'), sT = $('sT'), sS = $('sS'), eBox = $('eBox');
+        const resP = $('resP'), totTime = $('totTime');
+        const playB = $('playB'), playI = $('playI'), seekB = $('seekB'), tD = $('tD');
+        const wCan = $('wCan'), wO = $('wO'), dlBtn = $('dlBtn'), tabOpt = $('tabOpt'), tabOrig = $('tabOrig');
+        const lufsSlider = $('lufsSlider'), lufsVal = $('lufsVal');
 
-        let selectedFile = null, referenceFile = null, jobId = null;
-        let audioCtx = null, optimizedBlob = null, originalBlob = null;
-        let currentAudio = null, isPlaying = false, activeTab = 'optimized';
+        let selFile = null, refFile = null, jobId = null;
+        let audioCtx = null, optBlob = null, origBlob = null;
+        let curAudio = null, playing = false, activeTab = 'opt';
 
-        // ─── Upload ───
-        uploadZone.addEventListener('click', () => !uploadZone.classList.contains('locked') && audioInput.click());
-        uploadZone.addEventListener('dragover', e => { e.preventDefault(); uploadZone.classList.add('drag-over'); });
-        uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('drag-over'));
-        uploadZone.addEventListener('drop', e => { e.preventDefault(); uploadZone.classList.remove('drag-over'); e.dataTransfer.files.length && setFile(e.dataTransfer.files[0]); });
-        audioInput.addEventListener('change', () => audioInput.files.length && setFile(audioInput.files[0]));
-
-        function setFile(f) {
-            selectedFile = f;
-            fName.textContent = f.name;
-            fSize.textContent = fmt(f.size);
-            fileTag.classList.add('visible');
-            uploadZone.classList.add('has-file');
-            upTitle.textContent = 'File ready';
-            upHint.textContent = 'Click to change';
-            goBtn.disabled = false;
-        }
-
-        $('removeFile').addEventListener('click', e => {
-            e.stopPropagation();
-            selectedFile = null; audioInput.value = '';
-            fileTag.classList.remove('visible');
-            uploadZone.classList.remove('has-file');
-            upTitle.textContent = 'Drop your audio file here';
-            upHint.textContent = 'WAV · MP3 · M4A · FLAC · OGG · AAC';
-            goBtn.disabled = true;
+        // Stage toggles
+        const stageToggles = { isolate: true, denoise: true, master: true, normalize: true };
+        document.querySelectorAll('.sc .toggle').forEach(btn => {
+            btn.addEventListener('click', e => {
+                e.stopPropagation();
+                const key = btn.closest('.sc').dataset.key;
+                stageToggles[key] = !stageToggles[key];
+                btn.classList.toggle('off', !stageToggles[key]);
+                btn.closest('.sc').classList.toggle('disabled', !stageToggles[key]);
+            });
         });
 
-        refBtn.addEventListener('click', () => refInput.click());
-        refInput.addEventListener('change', () => {
-            if (refInput.files.length) {
-                referenceFile = refInput.files[0];
-                refText.textContent = referenceFile.name;
-                refBtn.classList.add('has-file');
-            }
+        // LUFS slider
+        lufsSlider.addEventListener('input', () => { lufsVal.textContent = lufsSlider.value });
+
+        // Effects panel toggle
+        $('fxToggle').addEventListener('click', () => { $('fxBody').classList.toggle('open'); $('fxArrow').classList.toggle('open') });
+
+        // Effect toggles
+        const fxState = { wind: false, eq: false, comp: false, rev: false };
+        const fxSliderMap = { wind: ['windCutoff'], eq: ['eqLow', 'eqMid', 'eqHigh'], comp: ['compTh', 'compRa', 'compAt', 'compRe'], rev: ['revRoom', 'revWet'] };
+        document.querySelectorAll('.fx-toggle').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const fx = btn.dataset.fx;
+                fxState[fx] = !fxState[fx];
+                btn.classList.toggle('on', fxState[fx]);
+                fxSliderMap[fx].forEach(id => { $(id).disabled = !fxState[fx] });
+            });
         });
 
-        function fmt(b) { return b < 1048576 ? (b / 1024).toFixed(1) + ' KB' : (b / 1048576).toFixed(1) + ' MB'; }
-        function fmtTime(s) { const m = Math.floor(s / 60); return m + ':' + String(Math.floor(s % 60)).padStart(2, '0'); }
+        // Slider value displays
+        const sliderDisplays = {
+            windCutoff: v => v + ' Hz', eqLow: v => v + ' dB', eqMid: v => v + ' dB', eqHigh: v => v + ' dB',
+            compTh: v => v + ' dB', compRa: v => v + ':1', compAt: v => v + ' ms', compRe: v => v + ' ms',
+            revRoom: v => v + '%', revWet: v => v + '%',
+        };
+        const valIds = { windCutoff: 'windVal', eqLow: 'eqLowVal', eqMid: 'eqMidVal', eqHigh: 'eqHighVal', compTh: 'compThVal', compRa: 'compRaVal', compAt: 'compAtVal', compRe: 'compReVal', revRoom: 'revRoomVal', revWet: 'revWetVal' };
+        Object.keys(sliderDisplays).forEach(id => {
+            $(id).addEventListener('input', () => { $(valIds[id]).textContent = sliderDisplays[id]($(id).value) });
+        });
 
-        // ─── Stages ───
-        const stageCards = document.querySelectorAll('.stage-card');
-        let stageTimes = {};
+        // Upload
+        uz.addEventListener('click', () => !uz.classList.contains('locked') && ai.click());
+        uz.addEventListener('dragover', e => { e.preventDefault(); uz.classList.add('drag-over') });
+        uz.addEventListener('dragleave', () => uz.classList.remove('drag-over'));
+        uz.addEventListener('drop', e => { e.preventDefault(); uz.classList.remove('drag-over'); e.dataTransfer.files.length && setFile(e.dataTransfer.files[0]) });
+        ai.addEventListener('change', () => ai.files.length && setFile(ai.files[0]));
 
-        function resetStages() {
-            stageCards.forEach(c => { c.classList.remove('active', 'done'); });
-            [1, 2, 3, 4].forEach(i => { const el = $('t' + i); if (el) el.textContent = ''; });
-            stageTimes = {};
+        function setFile(f) { selFile = f; fN.textContent = f.name; fS.textContent = fmt(f.size); ftag.classList.add('vis'); uz.classList.add('has-file'); upT.textContent = 'File ready'; upH.textContent = 'Click to change'; goBtn.disabled = false }
+        $('rmFile').addEventListener('click', e => { e.stopPropagation(); selFile = null; ai.value = ''; ftag.classList.remove('vis'); uz.classList.remove('has-file'); upT.textContent = 'Drop your audio file here'; upH.textContent = 'WAV · MP3 · M4A · FLAC · OGG · AAC'; goBtn.disabled = true });
+        refBtn.addEventListener('click', () => refIn.click());
+        refIn.addEventListener('change', () => { if (refIn.files.length) { refFile = refIn.files[0]; refT.textContent = refFile.name; refBtn.classList.add('has-file') } });
+
+        function fmt(b) { return b < 1048576 ? (b / 1024).toFixed(1) + ' KB' : (b / 1048576).toFixed(1) + ' MB' }
+        function fmtT(s) { const m = Math.floor(s / 60); return m + ':' + String(Math.floor(s % 60)).padStart(2, '0') }
+
+        // Stages
+        const scs = document.querySelectorAll('.sc');
+        let stTimes = {};
+        function resetS() { scs.forEach(c => c.classList.remove('active', 'done'));[1, 2, 3, 4, 5].forEach(i => { const e = $('t' + i); if (e) e.textContent = '' }); stTimes = {} }
+        function setS(n) { stTimes[n] = Date.now(); scs.forEach((c, i) => { const num = i + 1; if (num < n) { c.classList.remove('active'); c.classList.add('done'); if (stTimes[num] && stTimes[num + 1]) $('t' + num).textContent = ((stTimes[num + 1] - stTimes[num]) / 1000).toFixed(1) + 's' } else if (num === n) { c.classList.add('active'); c.classList.remove('done') } else c.classList.remove('active', 'done') }) }
+        function completeS() { const now = Date.now(); scs.forEach((c, i) => { const n = i + 1; c.classList.remove('active'); c.classList.add('done'); if (stTimes[n]) { const next = stTimes[n + 1] || now; $('t' + n).textContent = ((next - stTimes[n]) / 1000).toFixed(1) + 's' } }) }
+
+        // Build config
+        function buildConfig() {
+            const cfg = { stages: {}, effects: {} };
+            // Stage toggles
+            Object.keys(stageToggles).forEach(k => { cfg.stages[k] = { enabled: stageToggles[k] } });
+            // Custom LUFS
+            cfg.stages.normalize.lufs = parseInt(lufsSlider.value);
+            // Effects
+            cfg.effects.wind_removal = { enabled: fxState.wind, cutoff: parseInt($('windCutoff').value) };
+            cfg.effects.eq = { enabled: fxState.eq, low: parseFloat($('eqLow').value), mid: parseFloat($('eqMid').value), high: parseFloat($('eqHigh').value) };
+            cfg.effects.compressor = { enabled: fxState.comp, threshold: parseFloat($('compTh').value), ratio: parseFloat($('compRa').value), attack: parseFloat($('compAt').value), release: parseFloat($('compRe').value) };
+            cfg.effects.reverb = { enabled: fxState.rev, room: parseFloat($('revRoom').value) / 100, wet: parseFloat($('revWet').value) / 100 };
+            return cfg;
         }
 
-        function setStage(n) {
-            stageTimes[n] = Date.now();
-            stageCards.forEach((c, i) => {
-                const num = i + 1;
-                if (num < n) {
-                    c.classList.remove('active'); c.classList.add('done');
-                    if (stageTimes[num] && stageTimes[num + 1]) {
-                        $('t' + num).textContent = ((stageTimes[num + 1] - stageTimes[num]) / 1000).toFixed(1) + 's';
-                    }
-                } else if (num === n) {
-                    c.classList.add('active'); c.classList.remove('done');
-                } else {
-                    c.classList.remove('active', 'done');
-                }
-            });
-        }
-
-        function completeStages() {
-            const now = Date.now();
-            stageCards.forEach((c, i) => {
-                const num = i + 1;
-                c.classList.remove('active'); c.classList.add('done');
-                if (stageTimes[num]) {
-                    const next = stageTimes[num + 1] || now;
-                    $('t' + num).textContent = ((next - stageTimes[num]) / 1000).toFixed(1) + 's';
-                }
-            });
-        }
-
-        // ─── Submit ───
+        // Submit
         goBtn.addEventListener('click', async () => {
-            if (!selectedFile) return;
-            // Lock UI
-            goBtn.disabled = true;
-            goBtn.innerHTML = '<div class="spinner"></div> Uploading…';
-            uploadZone.classList.add('locked');
-            statusPanel.classList.add('visible');
-            resultPanel.classList.remove('visible');
-            errBox.classList.remove('visible');
-            setStatusProc('Uploading…', 'Sending your file to the server');
-            resetStages();
-            stopAudio();
+            if (!selFile) return;
+            goBtn.disabled = true; goBtn.innerHTML = '<div class="spinner"></div>Uploading…';
+            uz.classList.add('locked'); statusP.classList.add('vis'); resP.classList.remove('vis'); eBox.classList.remove('vis');
+            setProc('Uploading…', 'Sending your file'); resetS(); stopA();
 
-            const form = new FormData();
-            form.append('file', selectedFile);
-            if (referenceFile) form.append('reference', referenceFile);
+            const cfg = buildConfig();
+            const form = new FormData(); form.append('file', selFile); if (refFile) form.append('reference', refFile);
 
             try {
-                const res = await fetch(`/optimize?platform=${platform.value}`, { method: 'POST', body: form });
-                if (!res.ok) { const e = await res.json().catch(() => ({})); throw new Error(e.error || 'Upload failed'); }
-                const { job_id } = await res.json();
-                jobId = job_id;
+                const url = `/optimize?platform=${plat.value}&config=${encodeURIComponent(JSON.stringify(cfg))}`;
+                const res = await fetch(url, { method: 'POST', body: form });
+                if (!res.ok) { const e = await res.json().catch(() => ({})); throw new Error(e.error || 'Upload failed') }
+                const { job_id } = await res.json(); jobId = job_id;
+                goBtn.innerHTML = '<div class="spinner"></div>Processing…';
+                setProc('Starting pipeline…', 'Preparing audio');
 
-                goBtn.innerHTML = '<div class="spinner"></div> Processing…';
-                setStatusProc('Starting pipeline…', 'Preparing your audio');
-
-                // SSE progress
                 const es = new EventSource(`/progress/${job_id}`);
-                es.onmessage = async (ev) => {
+                es.onmessage = async ev => {
                     const d = JSON.parse(ev.data);
                     if (d.status === 'running') {
-                        if (d.stage >= 1 && d.stage <= 4) setStage(d.stage);
-                        const hints = {
-                            0: 'Converting to WAV format',
-                            1: 'Separating vocals from background audio',
-                            2: 'Removing noise while preserving voice quality',
-                            3: 'Matching EQ, compression, and stereo width',
-                            4: 'Hitting target loudness for your platform',
-                        };
-                        setStatusProc(d.stage_name || 'Processing…', hints[d.stage] || '');
+                        if (d.stage >= 1 && d.stage <= 5) setS(d.stage);
+                        const h = { 0: 'Converting format', 1: 'Separating vocals', 2: 'Removing noise', 3: 'Matching reference', 4: 'Normalizing loudness', 5: 'Applying studio effects' };
+                        setProc(d.stage_name || 'Processing…', h[d.stage] || '');
                     }
                     if (d.status === 'done') {
-                        es.close();
-                        completeStages();
-                        // Fetch job info for timing
+                        es.close(); completeS();
                         const info = await fetch(`/job/${job_id}`).then(r => r.json()).catch(() => null);
-                        if (info) totalTime.textContent = info.elapsed + 's total';
-                        // Fetch both audio blobs
-                        const [optRes, origRes] = await Promise.all([
-                            fetch(`/download/${job_id}`),
-                            fetch(`/original/${job_id}`),
-                        ]);
-                        optimizedBlob = await optRes.blob();
-                        originalBlob = await origRes.blob();
-                        statusPanel.classList.remove('visible');
-                        resultPanel.classList.add('visible');
-                        switchTab('optimized');
-                        unlock();
+                        if (info) totTime.textContent = info.elapsed + 's';
+                        const [oR, origR] = await Promise.all([fetch(`/download/${job_id}`), fetch(`/original/${job_id}`)]);
+                        optBlob = await oR.blob(); origBlob = await origR.blob();
+                        statusP.classList.remove('vis'); resP.classList.add('vis'); switchT('opt'); unlock();
                     }
-                    if (d.status === 'error') {
-                        es.close();
-                        resetStages();
-                        setStatusFail(d.error || 'Unknown error');
-                        unlock();
-                    }
+                    if (d.status === 'error') { es.close(); resetS(); setFail(d.error || 'Unknown error'); unlock() }
                 };
                 es.onerror = () => es.close();
-            } catch (err) {
-                setStatusFail(err.message);
-                unlock();
-            }
+            } catch (err) { setFail(err.message); unlock() }
         });
 
-        function setStatusProc(title, sub) {
-            sDot.className = 'status-dot proc';
-            sDot.innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 12a9 9 0 11-6.2-8.56"></path></svg>';
-            sTitle.textContent = title; sSub.textContent = sub;
-        }
-        function setStatusFail(msg) {
-            sDot.className = 'status-dot fail';
-            sDot.innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>';
-            sTitle.textContent = 'Something went wrong'; sSub.textContent = '';
-            errBox.textContent = msg; errBox.classList.add('visible');
-        }
-        function unlock() {
-            goBtn.disabled = false;
-            goBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg> Start Optimizing';
-            uploadZone.classList.remove('locked');
-        }
+        function setProc(t, s) { sDot.className = 'sdot proc'; sDot.innerHTML = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 12a9 9 0 11-6.2-8.56"></path></svg>'; sT.textContent = t; sS.textContent = s }
+        function setFail(m) { sDot.className = 'sdot fail'; sDot.innerHTML = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>'; sT.textContent = 'Error'; sS.textContent = ''; eBox.textContent = m; eBox.classList.add('vis') }
+        function unlock() { goBtn.disabled = false; goBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>Start Optimizing'; uz.classList.remove('locked') }
 
-        // ─── Audio Player ───
-        function switchTab(tab) {
-            activeTab = tab;
-            stopAudio();
-            tabOptimized.classList.toggle('active', tab === 'optimized');
-            tabOriginal.classList.toggle('active', tab === 'original');
-            const blob = tab === 'optimized' ? optimizedBlob : originalBlob;
-            if (blob) {
-                loadAudio(blob);
-                drawWaveform(blob);
-            }
-        }
-        tabOptimized.addEventListener('click', () => switchTab('optimized'));
-        tabOriginal.addEventListener('click', () => switchTab('original'));
+        // Audio Player
+        function switchT(t) { activeTab = t; stopA(); tabOpt.classList.toggle('active', t === 'opt'); tabOrig.classList.toggle('active', t === 'orig'); const b = t === 'opt' ? optBlob : origBlob; if (b) { loadA(b); drawW(b) } }
+        tabOpt.addEventListener('click', () => switchT('opt')); tabOrig.addEventListener('click', () => switchT('orig'));
 
-        function loadAudio(blob) {
-            stopAudio();
-            currentAudio = new Audio(URL.createObjectURL(blob));
-            currentAudio.addEventListener('timeupdate', () => {
-                if (currentAudio.duration) {
-                    seekBar.value = (currentAudio.currentTime / currentAudio.duration) * 1000;
-                    timeDisplay.textContent = fmtTime(currentAudio.currentTime) + ' / ' + fmtTime(currentAudio.duration);
-                }
-            });
-            currentAudio.addEventListener('ended', () => {
-                isPlaying = false;
-                playIcon.innerHTML = '<polygon points="5 3 19 12 5 21 5 3"></polygon>';
-                playBtn.classList.remove('playing');
-            });
-        }
+        function loadA(b) { stopA(); curAudio = new Audio(URL.createObjectURL(b)); curAudio.addEventListener('timeupdate', () => { if (curAudio.duration) { seekB.value = (curAudio.currentTime / curAudio.duration) * 1000; tD.textContent = fmtT(curAudio.currentTime) + ' / ' + fmtT(curAudio.duration) } }); curAudio.addEventListener('ended', () => { playing = false; playI.innerHTML = '<polygon points="5 3 19 12 5 21 5 3"></polygon>' }) }
+        function stopA() { if (curAudio) { curAudio.pause(); curAudio = null } playing = false; playI.innerHTML = '<polygon points="5 3 19 12 5 21 5 3"></polygon>'; seekB.value = 0; tD.textContent = '0:00 / 0:00' }
+        playB.addEventListener('click', () => { if (!curAudio) return; if (playing) { curAudio.pause(); playing = false; playI.innerHTML = '<polygon points="5 3 19 12 5 21 5 3"></polygon>' } else { curAudio.play(); playing = true; playI.innerHTML = '<rect x="6" y="4" width="4" height="16" rx="1"></rect><rect x="14" y="4" width="4" height="16" rx="1"></rect>' } });
+        seekB.addEventListener('input', () => { if (curAudio && curAudio.duration) curAudio.currentTime = (seekB.value / 1000) * curAudio.duration });
 
-        function stopAudio() {
-            if (currentAudio) { currentAudio.pause(); currentAudio = null; }
-            isPlaying = false;
-            playIcon.innerHTML = '<polygon points="5 3 19 12 5 21 5 3"></polygon>';
-            playBtn.classList.remove('playing');
-            seekBar.value = 0;
-            timeDisplay.textContent = '0:00 / 0:00';
-        }
+        async function drawW(blob) { wO.style.display = 'flex'; wO.textContent = 'Loading…'; try { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); const buf = await blob.arrayBuffer(); const dec = await audioCtx.decodeAudioData(buf); const data = dec.getChannelData(0); const c = wCan; const dpr = window.devicePixelRatio || 1; const w = c.parentElement.clientWidth; const h = c.parentElement.clientHeight; c.width = w * dpr; c.height = h * dpr; c.style.width = w + 'px'; c.style.height = h + 'px'; const ctx = c.getContext('2d'); ctx.scale(dpr, dpr); ctx.clearRect(0, 0, w, h); const step = Math.ceil(data.length / w); const mid = h / 2; const g = ctx.createLinearGradient(0, 0, w, 0); const isO = activeTab === 'opt'; g.addColorStop(0, isO ? '#6c47ff' : '#6b6b6b'); g.addColorStop(1, isO ? '#8b6fff' : '#9e9e9e'); ctx.fillStyle = g; for (let i = 0; i < w; i++) { let mn = 1, mx = -1; for (let j = 0; j < step; j++) { const v = data[i * step + j] || 0; if (v < mn) mn = v; if (v > mx) mx = v } const bH = Math.max(1, (mx - mn) * mid * .9); ctx.fillRect(i, mid - bH / 2, 1, bH) } wO.style.display = 'none' } catch (e) { wO.textContent = 'Could not render' } }
 
-        playBtn.addEventListener('click', () => {
-            if (!currentAudio) return;
-            if (isPlaying) {
-                currentAudio.pause();
-                isPlaying = false;
-                playIcon.innerHTML = '<polygon points="5 3 19 12 5 21 5 3"></polygon>';
-                playBtn.classList.remove('playing');
-            } else {
-                currentAudio.play();
-                isPlaying = true;
-                playIcon.innerHTML = '<rect x="6" y="4" width="4" height="16" rx="1"></rect><rect x="14" y="4" width="4" height="16" rx="1"></rect>';
-                playBtn.classList.add('playing');
-            }
-        });
-
-        seekBar.addEventListener('input', () => {
-            if (currentAudio && currentAudio.duration) {
-                currentAudio.currentTime = (seekBar.value / 1000) * currentAudio.duration;
-            }
-        });
-
-        async function drawWaveform(blob) {
-            waveOverlay.style.display = 'flex';
-            waveOverlay.textContent = 'Loading waveform…';
-            try {
-                if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                const buf = await blob.arrayBuffer();
-                const decoded = await audioCtx.decodeAudioData(buf);
-                const data = decoded.getChannelData(0);
-
-                const canvas = waveCanvas;
-                const dpr = window.devicePixelRatio || 1;
-                const w = canvas.parentElement.clientWidth;
-                const h = canvas.parentElement.clientHeight;
-                canvas.width = w * dpr;
-                canvas.height = h * dpr;
-                canvas.style.width = w + 'px';
-                canvas.style.height = h + 'px';
-
-                const ctx = canvas.getContext('2d');
-                ctx.scale(dpr, dpr);
-                ctx.clearRect(0, 0, w, h);
-
-                const step = Math.ceil(data.length / w);
-                const mid = h / 2;
-                const gradient = ctx.createLinearGradient(0, 0, w, 0);
-                const isOpt = activeTab === 'optimized';
-                gradient.addColorStop(0, isOpt ? '#6c47ff' : '#6b6b6b');
-                gradient.addColorStop(1, isOpt ? '#8b6fff' : '#9e9e9e');
-                ctx.fillStyle = gradient;
-
-                for (let i = 0; i < w; i++) {
-                    let min = 1, max = -1;
-                    for (let j = 0; j < step; j++) {
-                        const v = data[i * step + j] || 0;
-                        if (v < min) min = v;
-                        if (v > max) max = v;
-                    }
-                    const barH = Math.max(1, (max - min) * mid * 0.9);
-                    ctx.fillRect(i, mid - barH / 2, 1, barH);
-                }
-                waveOverlay.style.display = 'none';
-            } catch (e) {
-                waveOverlay.textContent = 'Could not render waveform';
-            }
-        }
-
-        // ─── Download ───
-        dlBtn.addEventListener('click', () => {
-            if (!optimizedBlob || !jobId) return;
-            const a = document.createElement('a');
-            a.href = URL.createObjectURL(optimizedBlob);
-            a.download = `optimized_${platform.value}.wav`;
-            document.body.appendChild(a); a.click(); document.body.removeChild(a);
-        });
+        dlBtn.addEventListener('click', () => { if (!optBlob || !jobId) return; const a = document.createElement('a'); a.href = URL.createObjectURL(optBlob); a.download = `optimized_${plat.value}.wav`; document.body.appendChild(a); a.click(); document.body.removeChild(a) });
     </script>
-
 </body>
 
 </html>

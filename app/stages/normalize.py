@@ -17,24 +17,25 @@ def normalize_loudness(
     input_path: Path,
     work_dir: Path,
     platform: str,
+    custom_lufs: int | float | None = None,
 ) -> Path:
     """
     Normalize audio loudness to the platform's LUFS target using ffmpeg.
 
-    Uses a two-pass loudnorm approach for accurate normalization:
-      Pass 1 — Analyze the input and extract measured loudness stats.
-      Pass 2 — Apply loudnorm with measured values for precise output.
+    Uses a two-pass loudnorm approach for accurate normalization.
 
     Args:
-        input_path:  Path to the mastered (or enhanced) WAV.
-        work_dir:    Temporary working directory for this request.
-        platform:    One of the keys in PLATFORM_TARGETS.
+        input_path:   Path to the mastered (or enhanced) WAV.
+        work_dir:     Temporary working directory.
+        platform:     One of the keys in PLATFORM_TARGETS.
+        custom_lufs:  Optional custom LUFS target (overrides platform default).
 
     Returns:
         Path to the final normalized 24-bit WAV.
     """
     target = PLATFORM_TARGETS[platform]
-    lufs = target["lufs"]
+    lufs = int(custom_lufs) if custom_lufs is not None else target["lufs"]
+    lufs = max(-60, min(-3, lufs))  # Clamp to safe range
     tp = target["tp"]
     lra = target["lra"]
 
