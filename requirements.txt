@@ -1,6 +1,8 @@
 fastapi
 uvicorn[standard]
 python-multipart
+soundfile
+numpy
 demucs
 resemble-enhance @ git+https://github.com/resemble-ai/resemble-enhance.git
 matchering
