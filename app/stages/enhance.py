@@ -8,8 +8,8 @@ lost frequencies and bandwidth.
 import logging
 from pathlib import Path
 
+import soundfile as sf
 import torch
-import torchaudio
 
 from app.config import ENHANCE_LAMBD, ENHANCE_NFE, ENHANCE_TAU
 
@@ -41,7 +41,12 @@ def enhance_audio(input_path: Path, work_dir: Path) -> Path:
 
     from resemble_enhance.enhancer.inference import enhance
 
-    wav, sr = torchaudio.load(str(input_path))
+    data, sr = sf.read(str(input_path), dtype="float32")
+    wav = torch.from_numpy(data)
+    if wav.ndim == 1:
+        wav = wav.unsqueeze(0)
+    else:
+        wav = wav.T
 
     # Resemble Enhance expects mono or will handle multi-channel internally
     enhanced_wav, new_sr = enhance(
@@ -55,7 +60,7 @@ def enhance_audio(input_path: Path, work_dir: Path) -> Path:
     )
 
     output_path = work_dir / "enhanced.wav"
-    torchaudio.save(str(output_path), enhanced_wav.cpu(), new_sr)
+    sf.write(str(output_path), enhanced_wav.cpu().numpy().T, new_sr)
 
     logger.info("Stage 2 complete → %s", output_path)
     return output_path

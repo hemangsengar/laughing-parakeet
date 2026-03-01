@@ -5,10 +5,12 @@ Separates vocals from background music/ambient noise.
 """
 
 import logging
-import shutil
 from pathlib import Path
 
-from demucs.api import Separator
+import soundfile as sf
+import torch
+from demucs.apply import apply_model
+from demucs.pretrained import get_model
 
 from app.config import DEMUCS_MODEL
 
@@ -28,17 +30,41 @@ def isolate_vocals(input_path: Path, work_dir: Path) -> Path:
     """
     logger.info("Stage 1 — Isolating vocals with Demucs (%s)", DEMUCS_MODEL)
 
-    separator = Separator(model=DEMUCS_MODEL, segment=None, jobs=0)
-    _, separated = separator.separate_audio_file(input_path)
+    # Load the pre-trained model
+    model = get_model(DEMUCS_MODEL)
+    model.eval()
 
-    # Save the vocals stem to the work directory
+    # Load audio via soundfile (avoids torchcodec dependency)
+    data, sr = sf.read(str(input_path), dtype="float32")
+    wav = torch.from_numpy(data)
+    # soundfile returns (samples,) for mono or (samples, channels) for stereo
+    if wav.ndim == 1:
+        wav = wav.unsqueeze(0)  # (1, samples) = mono
+    else:
+        wav = wav.T  # (channels, samples)
+    if sr != model.samplerate:
+        import torchaudio
+        wav = torchaudio.functional.resample(wav, sr, model.samplerate)
+
+    # Demucs expects (batch, channels, samples)
+    wav = wav.unsqueeze(0)
+
+    # If mono, duplicate to stereo (Demucs expects 2 channels)
+    if wav.shape[1] == 1:
+        wav = wav.repeat(1, 2, 1)
+
+    # Run separation
+    with torch.no_grad():
+        sources = apply_model(model, wav, device="cpu", split=True)
+
+    # sources shape: (batch, n_sources, channels, samples)
+    # Find the vocals index from model.sources
+    vocals_idx = model.sources.index("vocals")
+    vocals_tensor = sources[0, vocals_idx]  # (channels, samples)
+
+    # Save the vocals stem
     vocals_path = work_dir / "vocals.wav"
-
-    import torchaudio
-
-    vocals_tensor = separated["vocals"]
-    # Demucs returns tensors at the model's sample rate (44100 by default)
-    torchaudio.save(str(vocals_path), vocals_tensor.cpu(), separator.samplerate)
+    sf.write(str(vocals_path), vocals_tensor.cpu().numpy().T, model.samplerate)
 
     logger.info("Stage 1 complete → %s", vocals_path)
     return vocals_path
