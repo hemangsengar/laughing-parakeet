@@ -43,23 +43,21 @@ def enhance_audio(input_path: Path, work_dir: Path) -> Path:
     data, sr = sf.read(str(input_path), dtype="float32")
     wav = torch.from_numpy(data)
 
-    # Resemble Enhance denoiser requires 1D mono input
+    # Resemble Enhance denoiser expects exactly a 1D tensor (frames,)
     if wav.ndim == 2:
-        wav_mono = wav.mean(dim=1)
-    else:
-        wav_mono = wav
+        # sf.read returns (frames, channels), so we mean over dim 1
+        wav = wav.mean(dim=1)
 
     # Run denoiser only — no generative model, no distortion
     denoised_wav, new_sr = denoise(
-        wav_mono.to(device),
+        wav.to(device),
         sr,
         device=device,
     )
 
+    # Output is 1D (frames), convert to numpy directly for soundfile (it accepts 1D for mono)
     out = denoised_wav.cpu().numpy()
-    if out.ndim > 1:
-        out = out.squeeze()
-
+    
     output_path = work_dir / "enhanced.wav"
     sf.write(str(output_path), out, new_sr)
 
